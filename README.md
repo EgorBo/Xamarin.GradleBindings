@@ -13,7 +13,7 @@ Step 2: Just execute the command:
 
 and you will get something like this in your solution:
 
-![Alt text](https://habrastorage.org/files/c93/dcf/acc/c93dcfacca754948823facecaa786ef0.png)
+![Alt text](https://habrastorage.org/files/203/b63/42d/203b6342d5344040b05bddac7248fa05.png)
 
 Step 3: You still may have to fix some issues via Metadata.xml because my Add-in is not smart enough.
 
