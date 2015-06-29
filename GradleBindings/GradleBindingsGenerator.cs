@@ -78,7 +78,7 @@ namespace GradleBindings
         {
             //TODO: Xamarin VS add-in definitely knows where it is. find!
 
-            var androidSdk = Environment.GetEnvironmentVariable("ANDROID_HOME_");
+            var androidSdk = Environment.GetEnvironmentVariable("ANDROID_HOME");
             if (string.IsNullOrWhiteSpace(androidSdk))
             {
                 androidSdk = _settings.AndroidSdk;
