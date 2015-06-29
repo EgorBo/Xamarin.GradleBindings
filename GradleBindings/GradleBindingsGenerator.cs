@@ -40,7 +40,7 @@ namespace GradleBindings
             if (string.IsNullOrWhiteSpace(androidSdk))
                 return;
 
-            var dependencyInput = await _dependencyInputDialog.ShowAsync();
+            var dependencyInput = await _dependencyInputDialog.ShowAsync(Gradle.DefaultRepositores);
             if (dependencyInput == null)
                 return;
 
@@ -49,7 +49,7 @@ namespace GradleBindings
                 _busyIndicator.IsBusy = true;
                 var resultDependencies = Gradle.ExtractDependencies(dependencyInput.DependencyId, androidSdk, dependencyInput.DependencyRepository).ToList();
                 _busyIndicator.IsBusy = false;
-                if (resultDependencies.Count == 1 && !resultDependencies[0].IsDependency)
+                if (resultDependencies.Count == 1 && !resultDependencies[0].IsTransitive)
                 {
                     await _bindingProjectGenerator.GenerateAsync(sourceProjectName, dependencyInput.AssemblyName, resultDependencies);
                 }

@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using GradleBindings.Interfaces;
 
 namespace EgorBo.GradleBindings_VisualStudio.Dialogs
@@ -20,11 +23,12 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             InitializeComponent();
         }
 
-        public async Task<DependencyInputDialogResult> ShowAsync()
+        public async Task<DependencyInputDialogResult> ShowAsync(string defualtRepositories)
         {
+            RepositoriesTextBox.Text = defualtRepositories;
             if (ShowModal() == true)
             {
-                return new DependencyInputDialogResult(DependencyIdTextBox.Text, ProjectNameTextBox.Text, null);
+                return new DependencyInputDialogResult(DependencyIdTextBox.Text, ProjectNameTextBox.Text, RepositoriesTextBox.Text);
             }
             return null;
         }
@@ -36,6 +40,60 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             {
                 DialogResult = true;
             }
+        }
+
+        private void DependencyIdTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            //let's try to help user and generate a name for the assembly from Dependency String
+            //com.afollestad:material-dialogs:0.7.6.0 --> Binding_MaterialDialogs
+            var text = DependencyIdTextBox.Text;
+            var parts = text.Split(new[] {":"}, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 3)
+            {
+                var rsb = new StringBuilder();
+                var name = parts[1];
+                bool previousWasnotLetter = true;
+                for (int i = 0; i < name.Length; i++)
+                {
+                    if (char.IsLetter(name[i]))
+                    {
+                        rsb.Append(previousWasnotLetter ? char.ToUpper(name[i]) : name[i]);
+                        previousWasnotLetter = false;
+                        continue;
+                    }
+                    if (char.IsDigit(name[i]) && i > 0)
+                    {
+                        rsb.Append(name[i]);
+                    }
+                    previousWasnotLetter = true;
+                }
+
+                if (rsb.Length > 1)
+                {
+                    ProjectNameTextBox.Text = "Binding_" + rsb.ToString();
+                }
+            }
+            UpdateSubmitVisibility();
+        }
+
+        private void ProjectNameTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateSubmitVisibility();
+        }
+
+        private void UpdateSubmitVisibility()
+        {
+            OkButton.IsEnabled = !string.IsNullOrWhiteSpace(DependencyIdTextBox.Text) && !string.IsNullOrWhiteSpace(ProjectNameTextBox.Text);
+        }
+
+        private void Expander_OnExpanded(object sender, RoutedEventArgs e)
+        {
+            this.Height = 410; //Auto doesn't work for DialogWindow
+        }
+
+        private void Expander_OnCollapsed(object sender, RoutedEventArgs e)
+        {
+            this.Height = 240; //Auto doesn't work for DialogWindow
         }
     }
 }

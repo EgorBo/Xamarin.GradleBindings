@@ -1,7 +1,7 @@
 Xamarin.GradleBindings
 =========
 
-How java developers add dependencies to their projects? Yes that's right, via gradle (something like [this](https://github.com/WhisperSystems/TextSecure/blob/master/build.gradle#L37) or [that](https://github.com/popcorn-official/popcorn-android/blob/development/mobile/build.gradle#L92)). As you can see some java-projects use those dependencies a lot (all you want to write is already written) so it'd be nice to use those huge amount of 3rd party libraries in your Xamarin project, huh? I believe this Add-in for the Visul Studio 2013 (and lately for Xamarin Studio) will help you with it:
+How do java developers add dependencies to their projects? Yes that's right, via gradle (something like [this](https://github.com/WhisperSystems/TextSecure/blob/master/build.gradle#L37) or [that](https://github.com/popcorn-official/popcorn-android/blob/development/mobile/build.gradle#L92)). As you can see some java-projects use those dependencies a lot (all you want to write is already written) so it'd be nice to use those huge amount of 3rd party libraries in your Xamarin project, right? I believe this Add-in for Visual Studio 2013 (and lately for Xamarin Studio) will help you with it:
 
 Step 1: Execute the command over "References" folder
 
@@ -11,7 +11,7 @@ Step 2: Set an external dependency id and a name for Xamarin Android Binding Pro
 
 ![Alt text](https://habrastorage.org/files/cf1/414/c6a/cf1414c6a55448efbd65874c6311e719.png)
 
-The Plugin executes gradle scripts and receives dependencies list (including transitive ones). On this step you can select or deselect needed binaries (transitive dependencies are deselected by default).
+The Plugin executes gradle scripts and receives dependencies list (including transitive ones). At this step you can select or deselect needed binaries (transitive dependencies are deselected by default).
 **NOTE: you'd better use "Xamarin Components" for Support dependencies** (v4, RecyclerView, AppCompact, etc..).
 
 ![Alt text](https://habrastorage.org/files/0bb/bae/e3c/0bbbaee3cefa406981aa825710eb245e.png)

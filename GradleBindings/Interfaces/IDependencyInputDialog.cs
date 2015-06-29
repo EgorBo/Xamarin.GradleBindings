@@ -4,7 +4,7 @@ namespace GradleBindings.Interfaces
 {
     public interface IDependencyInputDialog
     {
-        Task<DependencyInputDialogResult> ShowAsync();
+        Task<DependencyInputDialogResult> ShowAsync(string repositores);
     }
 
     public class DependencyInputDialogResult

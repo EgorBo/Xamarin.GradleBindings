@@ -28,7 +28,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
 
         public async Task<IEnumerable<DependencyFile>> FilterDependenciesAsync(IEnumerable<DependencyFile> files)
         {
-            var dependencyInfoViewModels = files.Select(f => new DependencyInfoViewModel(!f.IsDependency, Path.GetFileName(f.File), f.File, f.IsDependency)).ToList();
+            var dependencyInfoViewModels = files.Select(f => new DependencyInfoViewModel(!f.IsTransitive, Path.GetFileName(f.File), f.File, f.IsTransitive)).ToList();
             DataGrid.ItemsSource = dependencyInfoViewModels;
             if (ShowModal() == true)
             {

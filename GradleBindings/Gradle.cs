@@ -10,7 +10,15 @@ namespace GradleBindings
 {
     public class Gradle
     {
-        private const string GradleScriptTemplate = 
+        public const string DefaultRepositores = 
+@"repositories { 
+    maven {
+        url ""%M2LOCAL%"" //will be replaced by add-in
+    }
+    jcenter()
+ }"; 
+
+        private const string GradleScriptTemplate =
 
 @"apply plugin: 'java'
 
@@ -24,13 +32,7 @@ def resolveDependencyStringTransitive(String dependencyString) {
     configurations.detachedConfiguration(dependency).setTransitive(true).resolve()
 }
 
-repositories { 
-    maven {
-        url ""%M2LOCALREPO_PATH%""
-    }
-	jcenter()
 %CUSTOM_REPOS%
- }
 
 task getDeps(type: Copy) {
   def resultFileAll = new File(""%RESULT_FILE_ALL%"")
@@ -47,8 +49,8 @@ task getDeps(type: Copy) {
         /// <param name="customRepositories">By default it searches dependencies to resolve in the jcentral and the local M2 repositores but you can extended it</param>
         public static IEnumerable<DependencyFile> ExtractDependencies(string dependency, string androidSdkHome, string customRepositories = null)
         {
-            dependency = dependency.Trim(' ', '\'', '\\');
-            if (dependency.StartsWith("compile ")) //the user copy-pasted compile 'dependency-id'
+            dependency = dependency.Trim(' ', '\'', '\"');
+            if (dependency.StartsWith("compile ")) //user copy-pasted compile 'dependency-id'
                 dependency = dependency.Remove(0, 8).Trim(' ', '\'', '\\');
 
             string baseDirectory = Path.Combine(Path.GetTempPath(), "Xamarin.GradleBindings", Guid.NewGuid().ToString("N").Substring(0, 6));
@@ -60,9 +62,11 @@ task getDeps(type: Copy) {
             var resultMainPath = Path.Combine(baseDirectory, "result_all.txt").FixPathForGradle();
             var resultAllPath = Path.Combine(baseDirectory, "result_main.txt").FixPathForGradle();
 
+            var repositories = string.IsNullOrEmpty(customRepositories) ? DefaultRepositores : customRepositories;
+            repositories = repositories.Replace("%M2LOCAL%", Path.Combine(androidSdkHome, @"extras\android\m2repository").FixPathForGradle() + "/");
+
             var script = GradleScriptTemplate
-                .Replace("%M2LOCALREPO_PATH%", Path.Combine(androidSdkHome, @"extras\android\m2repository").FixPathForGradle() + "/")
-                .Replace("%CUSTOM_REPOS%", customRepositories ?? "")
+                .Replace("%CUSTOM_REPOS%", repositories)
                 .Replace("%DEPENDENCY%", dependency)
                 .Replace("%RESULT_FILE_ALL%", resultAllPath)
                 .Replace("%RESULT_FILE_MAIN%", resultMainPath);
@@ -95,7 +99,7 @@ task getDeps(type: Copy) {
             if (!File.Exists(resultAllPath) ||
                 !File.Exists(resultMainPath))
             {
-                throw new GradleException(log);
+                throw new GradleException(log, script);
             }
 
             var allDependencies = File.ReadAllLines(resultAllPath).Where(f => !String.IsNullOrWhiteSpace(f)).ToList(); //dependencies of the dependency
@@ -103,7 +107,7 @@ task getDeps(type: Copy) {
 
             if (mainFiles.Count < 1)
             {
-                throw new GradleException(log);
+                throw new GradleException(log, script);
             }
 
             foreach (var file in mainFiles)

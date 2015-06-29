@@ -90,8 +90,8 @@ namespace EgorBo.GradleBindings_VisualStudio
 
             CreateBindingProject(sourceProject, solution, bindingProjectName,
                 dependenciesList.Where(d => d.File.EndsWith("aar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
-                dependenciesList.Where(d => !d.IsDependency && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
-                dependenciesList.Where(d => d.IsDependency && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File));
+                dependenciesList.Where(d => !d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
+                dependenciesList.Where(d => d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File));
         }
 
         /// <summary>

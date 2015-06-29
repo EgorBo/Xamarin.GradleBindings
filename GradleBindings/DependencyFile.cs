@@ -7,12 +7,12 @@ namespace GradleBindings
     {
         public string File { get; private set; }
 
-        public bool IsDependency { get; private set; }
+        public bool IsTransitive { get; private set; }
 
-        public DependencyFile(string file, bool isDependency)
+        public DependencyFile(string file, bool isTransitive)
         {
             File = file;
-            IsDependency = isDependency;
+            IsTransitive = isTransitive;
         }
     }
 }
