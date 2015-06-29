@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
              mc:Ignorable="d" Title="Add new dependency via gradle" 
-             Height="200" Width="440">
+             Height="210" Width="440">
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
         <TextBlock Text="External dependency id: (i.e.  com.afollestad:material-dialogs:0.7.6.0)" Margin="0,20,0,0"/>
         <TextBox x:Name="DependencyIdTextBox" Height="22"/>
