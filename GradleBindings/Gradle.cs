@@ -86,8 +86,8 @@ task getDeps(type: Copy) {
                     FileName = Path.Combine(baseDirectory, "gradlew.bat"),
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = false, 
-                    Arguments = "--info > log.txt"
+                    UseShellExecute = false,
+                    Arguments = "-info > log.txt"
                 },
             };
 

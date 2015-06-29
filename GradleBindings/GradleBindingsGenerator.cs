@@ -65,12 +65,12 @@ namespace GradleBindings
             catch (GradleException exc)
             {
                 _busyIndicator.IsBusy = false;
-                _errorDialog.ShowError(exc.Message);
+                _errorDialog.ShowError(exc.ToString());
             }
             catch (Exception exc)
             {
                 _busyIndicator.IsBusy = false;
-                _errorDialog.ShowError(exc.Message);
+                _errorDialog.ShowError(exc.ToString());
             }
         }
 

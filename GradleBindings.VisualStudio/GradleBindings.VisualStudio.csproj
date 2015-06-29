@@ -211,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Package.ico" />
+    <Resource Include="Resources\sign-error-icon.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GradleBindings\GradleBindings.csproj">

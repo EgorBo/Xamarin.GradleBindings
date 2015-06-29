@@ -6,9 +6,17 @@
              xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
              mc:Ignorable="d" 
              Title="Oops! Something went wrong..."
-             Height="185" Width="500">
-    <Grid>
-        <TextBlock x:Name="LogTextBlock" TextWrapping="Wrap" Margin="10">
-        </TextBlock>
-    </Grid>
+             Height="545" Width="500">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+            <Image Source="/GradleBindings.VisualStudio;component/Resources/sign-error-icon.png" Width="42" />
+            <TextBlock Text="Something went wrong..." VerticalAlignment="Center" Margin="10,0,0,0" FontSize="18"/>
+        </StackPanel>
+        <TextBox x:Name="LogTextBlock" 
+                 IsReadOnly="True" 
+                 Height="440"
+                 VerticalScrollBarVisibility="Visible"
+                 TextWrapping="Wrap" Margin="10">
+        </TextBox>
+    </StackPanel>
 </platformUi:DialogWindow>

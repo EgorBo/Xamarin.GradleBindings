@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace GradleBindings
 {
@@ -10,6 +11,19 @@ namespace GradleBindings
             : base(log)
         {
             OriginalScript = originalScript;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder();
+            result.Append("Gradle log:\n========\n");
+            result.Append(Message);
+            result.Append("\n\nOriginal script:\n========\n");
+            result.Append(OriginalScript);
+            result.Append("\n\nStack-Trace:\n========\n");
+            result.Append(StackTrace);
+
+            return result.ToString();
         }
     }
 }
