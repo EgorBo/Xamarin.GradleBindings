@@ -8,7 +8,7 @@
             const string testGradleFile = @"E:\demo\build.gradle";
 
             var result = new Gradle(androidSdk)
-                .ExtractAndCompileDependencies(testGradleFile);
+                .ExtractDependencies(testGradleFile);
         }
     }
 }

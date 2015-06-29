@@ -15,17 +15,29 @@ namespace GradleBindings
             _androidSdk = androidSdk;
         }
 
-        public IEnumerable<CompiledDependencyInfo> ExtractAndCompileDependencies(string gradleFile)
+        public IEnumerable<CompiledDependencyInfo> ExtractDependencies(string gradleFile)
         {
 
-            //Algorithm:
-            //1) create a simple Android gradle project (extract from embedded template)
-            //2) set Android.Sdk path to properties.local file (or we can check if ANDROID_HOME exists)
-            //3) replace gradle.build with a given one
-            //4) build the project via "gradlew build" (BTW, we can distribute the plugin with gradle binaries - https://gradle.org/downloads/ - 41 mb)
-            //5) if build failed - show errors
-            //6) open "build\intermediates\exploded-aar" and zip each directories (rename zip to aar and skip android support libraries)
-            //7) not sure yet about dependencies which compiles to "jar" rather than "aar" (i.e. Gson library) but they also should be somewhere here in the "build" folder
+            //just execute the gradle with getDeps task 
+
+            /*
+             
+apply plugin: 'java'
+
+dependencies {
+  compile 'com.afollestad:material-dialogs:0.7.6.0@aar'
+  compile 'com.makeramen:roundedimageview:2.1.0@aar'
+  //list of dependencies...
+}
+
+repositories { jcenter() }
+
+task getDeps(type: Copy) {
+  from sourceSets.main.runtimeClasspath
+  into 'runtime/' 
+}
+             
+             */
 
 
             //for the demo:

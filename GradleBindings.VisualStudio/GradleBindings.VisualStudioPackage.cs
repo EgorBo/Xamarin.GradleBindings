@@ -80,7 +80,7 @@ namespace EgorBo.GradleBindings_VisualStudio
 
             //NOTE: we should somehow get current Android SDK home path, Xamarin VS add-in definitely knows it
             var dependencies = new Gradle(string.Empty)
-                .ExtractAndCompileDependencies(gradleFileItem.Name);
+                .ExtractDependencies(gradleFileItem.Name);
 
             foreach (var libraryItem in dependencies)
             {
