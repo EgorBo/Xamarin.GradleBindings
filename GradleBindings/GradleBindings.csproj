@@ -51,9 +51,12 @@
     <Compile Include="DependencyFile.cs" />
     <Compile Include="GradleException.cs" />
     <Compile Include="Interfaces\IBindingProjectGenerator.cs" />
+    <Compile Include="Interfaces\IBusyIndicator.cs" />
     <Compile Include="Interfaces\IDependencyInputDialog.cs" />
     <Compile Include="Interfaces\IDependencyOutputSelectorDialog.cs" />
+    <Compile Include="Interfaces\IAndroidSdkDialog.cs" />
     <Compile Include="Interfaces\IErrorDialog.cs" />
+    <Compile Include="Interfaces\ISettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -42,7 +42,7 @@
     <Groups>
 
       <Group guid="guidGradleBindings_VisualStudioCmdSet" id="MyMenuGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_REFERENCEROOT"/>
       </Group>
       
 
@@ -67,7 +67,7 @@
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
-          <ButtonText>Generate or Update Xamarin Bindings</ButtonText>
+          <ButtonText>Add dependency via gradle (Generates Android Binding project)</ButtonText>
         </Strings>
       </Button>
 

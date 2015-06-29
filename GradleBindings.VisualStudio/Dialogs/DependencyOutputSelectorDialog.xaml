@@ -1,0 +1,33 @@
+﻿<platformUi:DialogWindow x:Class="EgorBo.GradleBindings_VisualStudio.Dialogs.DependencyOutputSelectorDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
+             mc:Ignorable="d" Title="Dependencies list"
+             Height="400" Width="700" MinWidth="700">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Select jar/aar files you want to add (transitive dependencies are deselected by default)" Margin="10,7,10,10" VerticalAlignment="Top"/>
+        <DataGrid x:Name="DataGrid" Grid.Row="1" 
+                  Margin="10,0,10,10"
+                  CanUserAddRows="False"
+                  CanUserReorderColumns="False"
+                  CanUserDeleteRows="False"
+                  CanUserResizeColumns="True"
+                  CanUserResizeRows="False"
+                  CanUserSortColumns="False"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Include?" Binding="{Binding Included, Mode=TwoWay}" IsReadOnly="False"/>
+                <DataGridTextColumn Header="Name" Width="220" Binding="{Binding Name}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Path" Width="*" Binding="{Binding Path}" IsReadOnly="True"/>
+        </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="OkButton" Click="OkButton_OnClick" Grid.Row="2" Content="Ok" Width="100" HorizontalAlignment="Right" Margin="0,0,10,10"/>
+    </Grid>
+</platformUi:DialogWindow>

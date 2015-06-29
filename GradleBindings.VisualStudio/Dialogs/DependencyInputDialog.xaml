@@ -1,0 +1,16 @@
+﻿<platformUi:DialogWindow x:Class="EgorBo.GradleBindings_VisualStudio.Dialogs.DependencyInputDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
+             mc:Ignorable="d" Title="Add new dependency via gradle" 
+             Height="200" Width="440">
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
+        <TextBlock Text="External dependency id: (i.e.  com.afollestad:material-dialogs:0.7.6.0)" Margin="0,20,0,0"/>
+        <TextBox x:Name="DependencyIdTextBox" Height="22"/>
+        <TextBlock Text="Binding project name: (i.e.  Binding_MaterialDialogs)" Margin="0,6,0,0"/>
+        <TextBox x:Name="ProjectNameTextBox" Height="22"/>
+        <Button Content="Ok" Click="OkButton_OnClick" HorizontalAlignment="Right" Width="90" Margin="0,20,0,0" Height="22"/>
+    </StackPanel>
+</platformUi:DialogWindow>

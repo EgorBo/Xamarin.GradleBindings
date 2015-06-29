@@ -4,12 +4,14 @@ using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using EgorBo.GradleBindings_VisualStudio.Dialogs;
 using EnvDTE;
 using EnvDTE80;
 using GradleBindings;
-using Microsoft.VisualStudio;
+using GradleBindings.Interfaces;
 using Microsoft.VisualStudio.Shell;
 using VSLangProj;
+using Task = System.Threading.Tasks.Task;
 
 namespace EgorBo.GradleBindings_VisualStudio
 {
@@ -19,10 +21,8 @@ namespace EgorBo.GradleBindings_VisualStudio
     [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")] //UICONTEXT_SolutionExists -- force it to autoload
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(GuidList.guidGradleBindings_VisualStudioPkgString)]
-    public sealed class GradleBindings_VisualStudioPackage : Package
+    public sealed class GradleBindings_VisualStudioPackage : Package, IBindingProjectGenerator, IBusyIndicator
     {
-        private const string GradleFileExtension = ".gradle";
-
         protected override void Initialize()
         {
             base.Initialize();
@@ -37,7 +37,7 @@ namespace EgorBo.GradleBindings_VisualStudio
         }
 
         /// <summary>
-        /// Let's show our "Generate bindings" menu only for ".gradle" files
+        /// Let's show our "Generate bindings" only for Android projects
         /// </summary>
         private void GenerateBindingsMenu_OnBeforeQueryStatus(object sender, EventArgs e)
         {
@@ -51,45 +51,47 @@ namespace EgorBo.GradleBindings_VisualStudio
                 if (selectedItem == null)
                     return;
 
-                var kind = selectedItem.Kind;
-                Guid kindId;
-                if (Guid.TryParse(kind, out kindId))
-                {
-                    var isFile = VSConstants.GUID_ItemType_PhysicalFile == kindId;
-                    if (isFile)
-                    {
-                        var extension = Path.GetExtension(selectedItem.Name);
-                        if (GradleFileExtension.Equals(extension, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            enable = true;
-                        }
-                    }
-                }
+                var projectKind = selectedItem.ContainingProject.Kind;
+                enable = true;
             }
             menu.Visible = enable;
         }
 
-        private void GenerateBindingMenuClickedCallback(object sender, EventArgs e)
+        private async void GenerateBindingMenuClickedCallback(object sender, EventArgs e)
         {
             var envDte = GetService(typeof(DTE)) as DTE2;
-
-            var gradleFileItem = envDte.SelectedItems.OfType<SelectedItem>().First().ProjectItem;
-            var project = gradleFileItem.ContainingProject.Object as VSProject; //it should have at least one item
-            
-            var solution = envDte.Solution as Solution2;
-
-            //NOTE: we should somehow get current Android SDK home path, Xamarin VS add-in definitely knows it
-            var dependencies = new Gradle(string.Empty)
-                .ExtractDependencies(gradleFileItem.Name);
-
-            foreach (var libraryItem in dependencies)
+            Array projects = envDte.ActiveSolutionProjects as Array;
+            Project currentproject;
+            if (projects.Length > 0)
             {
-                CreateBindingProject(project, solution,
-                    libraryItem.ShortName,
-                    libraryItem.Files.Where(f => f.Type == DependencyFileType.Aar).Select(f => f.Path),
-                    libraryItem.Files.Where(f => f.Type == DependencyFileType.Jar).Select(f => f.Path),
-                    libraryItem.Files.Where(f => f.Type == DependencyFileType.ReferencedJar).Select(f => f.Path));
+                currentproject = projects.GetValue(0) as Project;
             }
+            else
+            {
+                return;
+            }
+
+            await new GradleBindingsGenerator(
+                bindingProjectGenerator: this,
+                busyIndicator: this,
+                settings: new SettingsAdapter(),
+                androidSdkDialog: new AndroidSdkDialog(),
+                dependencyInputDialog: new DependencyInputDialog(), 
+                dependencyOutputSelectorDialog: new DependencyOutputSelectorDialog(),
+                errorDialog: new ErrorDialog()).Generate(currentproject.Name);
+        }
+
+        public async Task GenerateAsync(string sourceProjectName, string bindingProjectName, IEnumerable<DependencyFile> dependencies)
+        {
+            var dependenciesList = dependencies.ToList();
+            var envDte = GetService(typeof(DTE)) as DTE2;
+            var solution = envDte.Solution as Solution2;
+            var sourceProject = solution.Projects.OfType<Project>().First(p => p.Name == sourceProjectName).Object as VSProject;
+
+            CreateBindingProject(sourceProject, solution, bindingProjectName,
+                dependenciesList.Where(d => d.File.EndsWith("aar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
+                dependenciesList.Where(d => !d.IsDependency && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
+                dependenciesList.Where(d => d.IsDependency && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File));
         }
 
         /// <summary>
@@ -104,7 +106,6 @@ namespace EgorBo.GradleBindings_VisualStudio
         {
             var newProject = CreateProjectAndAddReferenceToIt(sourceProject, solution, "BindingsProject.zip", bindingProjectName, "AndroidBindings");
             //BindingsProject.zip stands for   //C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\Extensions\Xamarin\Xamarin\3.11.590.0\T\~PC\PT\Android\BindingsProject.zip\BindingsProject.vstemplate
-
 
             if (aarFiles != null)
             {
@@ -164,6 +165,12 @@ namespace EgorBo.GradleBindings_VisualStudio
             }
 
             return newProject;
+        }
+
+        public bool IsBusy
+        {
+            get { return false; }
+            set { /*TODO: */ }
         }
     }
 }
