@@ -1,15 +1,18 @@
-﻿namespace GradleBindings
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace GradleBindings
 {
     public class DependencyFile
     {
-        public string Path { get; set; }
+        public string File { get; private set; }
 
-        public DependencyFileType Type { get; set; }
+        public bool IsDependency { get; private set; }
 
-        public DependencyFile(string path, DependencyFileType type)
+        public DependencyFile(string file, bool isDependency)
         {
-            Path = path;
-            Type = type;
+            File = file;
+            IsDependency = isDependency;
         }
     }
 }

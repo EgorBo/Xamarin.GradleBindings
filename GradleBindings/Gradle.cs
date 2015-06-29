@@ -1,54 +1,137 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using GradleBindings.Extensions;
 
 namespace GradleBindings
 {
     public class Gradle
     {
-        private readonly string _androidSdk;
+        private const string GradleScriptTemplate = 
 
-        /// <summary>
-        /// We need it for the gradle 
-        /// (or we can hope that user has ANDROID_HOME set)
-        /// </summary>
-        public Gradle(string androidSdk)
-        {
-            _androidSdk = androidSdk;
-        }
+@"apply plugin: 'java'
 
-        public IEnumerable<CompiledDependencyInfo> ExtractDependencies(string gradleFile)
-        {
-
-            //just execute the gradle with getDeps task 
-
-            /*
-             
-apply plugin: 'java'
-
-dependencies {
-  compile 'com.afollestad:material-dialogs:0.7.6.0@aar'
-  compile 'com.makeramen:roundedimageview:2.1.0@aar'
-  //list of dependencies...
+def resolveDependencyString(String dependencyString) {
+    def dependency = dependencies.create(dependencyString)
+    configurations.detachedConfiguration(dependency).setTransitive(false).resolve()
 }
 
-repositories { jcenter() }
+def resolveDependencyStringTransitive(String dependencyString) {
+    def dependency = dependencies.create(dependencyString)
+    configurations.detachedConfiguration(dependency).setTransitive(true).resolve()
+}
+
+repositories { 
+    maven {
+        url ""%M2LOCALREPO_PATH%""
+    }
+	jcenter()
+%CUSTOM_REPOS%
+ }
 
 task getDeps(type: Copy) {
-  from sourceSets.main.runtimeClasspath
-  into 'runtime/' 
-}
-             
-             */
+  def resultFileAll = new File(""%RESULT_FILE_ALL%"")
+  def resultFileMain = new File(""%RESULT_FILE_MAIN%"")
+  resolveDependencyString('%DEPENDENCY%').sort().each { resultFileMain.append('\n' + it.toString()) }
+  resolveDependencyStringTransitive('%DEPENDENCY%').sort().each { resultFileAll.append('\n' + it.toString()) }
+}";
+
+        /// <summary>
+        /// Extracts (resolves) list of dependencies (including transitive dependencies)
+        /// </summary>
+        /// <param name="dependency">Dependency id, i.e.  com.afollestad:material-dialogs:0.7.6.0</param>
+        /// <param name="androidSdkHome">Path to Android SDK home, i.e.   C:\Users\Egorbo\AppData\Local\Android\sdk</param>
+        /// <param name="customRepositories">By default it searches dependencies to resolve in the jcentral and the local M2 repositores but you can extended it</param>
+        public static IEnumerable<DependencyFile> ExtractDependencies(string dependency, string androidSdkHome, string customRepositories = null)
+        {
+            string baseDirectory = Path.Combine(Path.GetTempPath(), "Xamarin.GradleBindings", Guid.NewGuid().ToString("N").Substring(0, 6));
+            if (Directory.Exists(baseDirectory))
+                Directory.Delete(baseDirectory, true);
+
+            Directory.CreateDirectory(baseDirectory);
+
+            var resultMainPath = Path.Combine(baseDirectory, "result_all.txt").FixPathForGradle();
+            var resultAllPath = Path.Combine(baseDirectory, "result_main.txt").FixPathForGradle();
+
+            var script = GradleScriptTemplate
+                .Replace("%M2LOCALREPO_PATH%", Path.Combine(androidSdkHome, @"extras\android\m2repository").FixPathForGradle() + "/")
+                .Replace("%CUSTOM_REPOS%", customRepositories ?? "")
+                .Replace("%DEPENDENCY%", dependency)
+                .Replace("%RESULT_FILE_ALL%", resultAllPath)
+                .Replace("%RESULT_FILE_MAIN%", resultMainPath);
 
 
-            //for the demo:
-            //NOTE: Material Dialogs has some class that should be public so there should be a fix applied via Metadata.xml
-            yield return new CompiledDependencyInfo(name: "com.afollestad:material-dialogs:0.7.6.0",
-                shortName: "Binding_MaterialDialogs", 
-                files: new List<DependencyFile> { new DependencyFile(@"C:\Users\Egorbo\Downloads\material-dialogs-master\material-dialogs-master\library\build\outputs\aar\library-release.aar", DependencyFileType.Aar) });
+            CopyEmbeddedGradleFilesTo(baseDirectory);
+            using (var sw = new StreamWriter(Path.Combine(baseDirectory, "build.gradle")))
+            {
+                sw.Write(script);
+            }
 
-            yield return new CompiledDependencyInfo(name: "com.makeramen:roundedimageview:2.1.0", 
-                shortName: "Binding_RoundedImageView", 
-                files: new List<DependencyFile> { new DependencyFile(@"C:\Users\Egorbo\Downloads\RoundedImageView-master\RoundedImageView-master\roundedimageview\build\outputs\aar\roundedimageview-release.aar", DependencyFileType.Aar) });
+            Environment.CurrentDirectory = baseDirectory;
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Path.Combine(baseDirectory, "gradlew.bat"),
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false, 
+                    Arguments = "--info > log.txt"
+                },
+            };
+
+            process.Start();
+            process.WaitForExit();
+
+            var log = File.ReadAllText(Path.Combine(baseDirectory, "log.txt"));
+
+            if (!File.Exists(resultAllPath) ||
+                !File.Exists(resultMainPath))
+            {
+                throw new GradleException(log);
+            }
+
+            var allDependencies = File.ReadAllLines(resultAllPath).Where(f => !String.IsNullOrWhiteSpace(f)).ToList(); //dependencies of the dependency
+            var mainFiles = File.ReadAllLines(resultMainPath).Where(f => !String.IsNullOrWhiteSpace(f)).ToList();
+
+            if (mainFiles.Count < 1)
+            {
+                throw new GradleException(log);
+            }
+
+            foreach (var file in mainFiles)
+            {
+                yield return new DependencyFile(file, false);
+            }
+
+            foreach (var file in allDependencies)
+            {
+                if (!mainFiles.Contains(file))
+                    yield return new DependencyFile(file, true);
+            }
+        }
+
+        private static void CopyEmbeddedGradleFilesTo(string destDir)
+        {
+            var executingAssembly = Assembly.GetExecutingAssembly();
+
+            const string gradleFileNamespace = "GradleBindings.GradleFiles";
+            var gradleFiles = executingAssembly
+                .GetManifestResourceNames()
+                .Where(r => r.StartsWith(gradleFileNamespace));
+
+            foreach (var gradleFile in gradleFiles)
+            {
+                var manifestResourceStream = executingAssembly.GetManifestResourceStream(gradleFile);
+                var filePath = Path.Combine(destDir, gradleFile.Remove(0, gradleFileNamespace.Length + 1));
+                using (Stream file = File.Create(filePath))
+                {
+                    manifestResourceStream.CopyTo(file);
+                }
+            }
         }
     }
 }

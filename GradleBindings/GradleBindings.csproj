@@ -45,15 +45,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BindingsProjectGenerator.cs" />
-    <Compile Include="DependencyFile.cs" />
-    <Compile Include="DependencyFileType.cs" />
+    <Compile Include="GradleBindingsGenerator.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Gradle.cs" />
-    <Compile Include="CompiledDependencyInfo.cs" />
+    <Compile Include="DependencyFile.cs" />
+    <Compile Include="GradleException.cs" />
+    <Compile Include="Interfaces\IBindingProjectGenerator.cs" />
+    <Compile Include="Interfaces\IDependencyInputDialog.cs" />
+    <Compile Include="Interfaces\IDependencyOutputSelectorDialog.cs" />
+    <Compile Include="Interfaces\IErrorDialog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GradleFiles\gradle-wrapper.properties" />
+    <EmbeddedResource Include="GradleFiles\gradlew" />
+    <EmbeddedResource Include="GradleFiles\gradlew.bat" />
     <None Include="Key.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GradleFiles\gradle-wrapper.jar" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

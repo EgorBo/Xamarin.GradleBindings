@@ -1,14 +1,23 @@
-﻿namespace GradleBindings.Console
+﻿using System;
+using System.Linq;
+
+namespace GradleBindings.Console
 {
     class Program
     {
         static void Main(string[] args)
         {
-            const string androidSdk = @"C:\Users\Egorbo\AppData\Local\Android\sdk";
-            const string testGradleFile = @"E:\demo\build.gradle";
+            var androidSdk = Environment.GetEnvironmentVariable("ANDROID_HOME");
 
-            var result = new Gradle(androidSdk)
-                .ExtractDependencies(testGradleFile);
+            var result = Gradle.ExtractDependencies("com.makeramen:roundedimageview:2.1.0", @"C:\Users\Egorbo\AppData\Local\Android\sdk")
+                .OrderBy(f => f.IsDependency)
+                .ToList();
+
+            foreach (var file in result)
+            {
+                System.Console.WriteLine("{0} [main: {1}]", file.File, !file.IsDependency);
+            }
+            System.Console.ReadKey();
         }
     }
 }
