@@ -6,7 +6,7 @@
              xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
              mc:Ignorable="d" 
              Title="Set Android SDK Home"
-             Height="155" Width="520">
+             Height="160" Width="520">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
