@@ -5,11 +5,11 @@ How do java developers add dependencies to their projects? Yes that's right, via
 
 Step 1: Execute the command over "References" folder
 
-![Alt text](https://habrastorage.org/files/2af/737/330/2af7373308564b70bf3c12b589ac20f9.png)
+![Alt text](https://habrastorage.org/files/f19/c62/8e1/f19c628e122349129eaa0436f891b49a.png)
 
 Step 2: Set an external dependency id and a name for Xamarin Android Binding Project (will be generated). This dialog will allow you to specify custom repositories as well soon.
 
-![Alt text](https://habrastorage.org/files/cf1/414/c6a/cf1414c6a55448efbd65874c6311e719.png)
+![Alt text](https://habrastorage.org/files/902/3c7/e5c/9023c7e5cc254f9fb1e704a45b7195c1.png)
 
 The Plugin executes gradle scripts and receives dependencies list (including transitive ones). At this step you can select or deselect needed binaries (transitive dependencies are deselected by default).
 **NOTE: you'd better use "Xamarin Components" for Support dependencies** (v4, RecyclerView, AppCompact, etc..).
