@@ -1,6 +1,8 @@
 Xamarin.GradleBindings
 =========
 
+Link to extensions gallery: https://visualstudiogallery.msdn.microsoft.com/3a3257c7-473a-4790-9610-9a561eed0b8c
+
 How do java developers add dependencies to their projects? Yes that's right, via gradle (something like [this](https://github.com/WhisperSystems/TextSecure/blob/master/build.gradle#L37) or [that](https://github.com/popcorn-official/popcorn-android/blob/development/mobile/build.gradle#L92)). As you can see some java-projects use those dependencies a lot (all you want to write is already written) so it'd be nice to use those huge amount of 3rd party libraries in your Xamarin project, right? I believe this Add-in for Visual Studio 2013 (and lately for Xamarin Studio) will help you with it:
 
 Step 1: Execute the command over "References" folder
