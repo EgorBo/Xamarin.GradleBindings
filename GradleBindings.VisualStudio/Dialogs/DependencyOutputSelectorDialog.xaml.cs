@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using GradleBindings;
 using GradleBindings.Interfaces;
 
@@ -46,9 +47,6 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
     public class DependencyInfoViewModel : INotifyPropertyChanged
     {
         private bool _included;
-        private string _name;
-        private string _path;
-        private bool _isDependency;
 
         public bool Included
         {
@@ -56,26 +54,17 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             set { SetProperty(ref _included, value); }
         }
 
-        public string Name
-        {
-            get { return _name; }
-            set { SetProperty(ref _name, value); }
-        }
+        public string Name { get; set; }
 
-        public string Path
-        {
-            get { return _path; }
-            set { SetProperty(ref _path, value); }
-        }
+        public string Path { get; set; }
 
-        public bool IsDependency
-        {
-            get { return _isDependency; }
-            set { SetProperty(ref _isDependency, value); }
-        }
+        public bool IsDependency { get; set; }
+
+        public Color RowColor { get; set; }
 
         public DependencyInfoViewModel(bool included, string name, string path, bool isDependency)
         {
+            RowColor = isDependency ? Colors.White : Color.FromRgb(255, 249, 206);
             Included = included;
             Name = name;
             Path = path;

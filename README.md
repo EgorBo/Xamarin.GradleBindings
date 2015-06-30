@@ -14,9 +14,9 @@ Step 2: Set an external dependency id and a name for Xamarin Android Binding Pro
 ![Alt text](https://habrastorage.org/files/902/3c7/e5c/9023c7e5cc254f9fb1e704a45b7195c1.png)
 
 The Plugin executes gradle scripts and receives dependencies list (including transitive ones). At this step you can select or deselect needed binaries (transitive dependencies are deselected by default).
-**NOTE: you'd better use "Xamarin Components" for Support dependencies** (v4, RecyclerView, AppCompact, etc..).
+**NOTE: you'd better use "Xamarin Components" or directly NuGet for Support dependencies** (v4, RecyclerView, AppCompact, etc..).
 
-![Alt text](https://habrastorage.org/files/0bb/bae/e3c/0bbbaee3cefa406981aa825710eb245e.png)
+![Alt text](https://habrastorage.org/files/d33/b60/0ae/d33b600ae87e41888c59fda2971861a0.png)
 
 Step 3: The binding project will be generated but you still may have to fix some issues via Metadata.xml because the Add-in is not smart enough.
 

@@ -14,8 +14,10 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Select jar/aar files you want to add (transitive dependencies are deselected by default)" Margin="10,7,10,10" VerticalAlignment="Top"/>
         <DataGrid x:Name="DataGrid" Grid.Row="1" 
-                  Margin="10,0,10,10"
+                  Margin="10,0,10,10" HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray"
                   CanUserAddRows="False"
+                  RowHeaderWidth="0"
+                  BorderBrush="LightGray"
                   CanUserReorderColumns="False"
                   CanUserDeleteRows="False"
                   CanUserResizeColumns="True"
@@ -26,7 +28,16 @@
                 <DataGridCheckBoxColumn Header="Include?" Binding="{Binding Included, Mode=TwoWay}" IsReadOnly="False"/>
                 <DataGridTextColumn Header="Name" Width="220" Binding="{Binding Name}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Path" Width="*" Binding="{Binding Path}" IsReadOnly="True"/>
-        </DataGrid.Columns>
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{Binding RowColor}"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.RowStyle>
         </DataGrid>
         <Button x:Name="OkButton" Click="OkButton_OnClick" Grid.Row="2" Content="Ok" Width="100" HorizontalAlignment="Right" Margin="0,0,10,10"/>
     </Grid>
