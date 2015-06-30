@@ -5,11 +5,11 @@ Link to extensions gallery: https://visualstudiogallery.msdn.microsoft.com/3a325
 
 How do java developers add dependencies to their projects? Yes that's right, via gradle (something like [this](https://github.com/WhisperSystems/TextSecure/blob/master/build.gradle#L37) or [that](https://github.com/popcorn-official/popcorn-android/blob/development/mobile/build.gradle#L92)). As you can see some java-projects use those dependencies a lot (all you want to write is already written) so it'd be nice to use those huge amount of 3rd party libraries in your Xamarin project, right? I believe this Add-in for Visual Studio 2013 (and lately for Xamarin Studio) will help you with it:
 
-Step 1: Execute the command over "References" folder
+**Step 1**: Execute the command over "References" folder
 
 ![Alt text](https://habrastorage.org/files/f19/c62/8e1/f19c628e122349129eaa0436f891b49a.png)
 
-Step 2: Set an external dependency id and a name for Xamarin Android Binding Project (will be generated). This dialog will allow you to specify custom repositories as well soon.
+**Step 2**: Set an external dependency id and a name for Xamarin Android Binding Project (will be generated). This dialog will allow you to specify custom repositories as well soon.
 
 ![Alt text](https://habrastorage.org/files/902/3c7/e5c/9023c7e5cc254f9fb1e704a45b7195c1.png)
 
@@ -18,9 +18,14 @@ The Plugin executes gradle scripts and receives dependencies list (including tra
 
 ![Alt text](https://habrastorage.org/files/d33/b60/0ae/d33b600ae87e41888c59fda2971861a0.png)
 
-Step 3: The binding project will be generated but you still may have to fix some issues via Metadata.xml because the Add-in is not smart enough.
+**Step 3**: The binding project will be generated but you still may have to fix some issues via Metadata.xml because the Add-in is not smart enough. For our example you will have to change visibility of [DialogBase](https://github.com/afollestad/material-dialogs/blob/master/library/src/main/java/com/afollestad/materialdialogs/DialogBase.java#L14) class because it's private in Java and C# doesn't support deriving public classes from private ones. So just add it to the Transforms/Metadata.xml (more info [here](http://developer.xamarin.com/guides/android/advanced_topics/java_integration_overview/binding_a_java_library_(.jar)/#Resolving_API_Differences)):
 
-Step 4: Now you are ready to use them! i.e. the Material Dialogs:
+```Xml
+<attr path="/api/package[@name='com.afollestad.materialdialogs']/class[@name='DialogBase']" name="visibility">public</attr>
+```
+
+
+**Step 4**: Now you are ready to use them! i.e. the Material Dialogs:
 
 ![Alt text](https://habrastorage.org/files/273/712/364/2737123640984b55b37d6a286b0c741f.png)
 
