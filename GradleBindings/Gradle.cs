@@ -74,12 +74,8 @@ task getDeps(type: Copy) {
                 .Replace("%RESULT_FILE_ALL%", resultAllPath)
                 .Replace("%RESULT_FILE_MAIN%", resultMainPath);
 
-
             CopyEmbeddedGradleFilesTo(baseDirectory);
-            using (var sw = new StreamWriter(Path.Combine(baseDirectory, "build.gradle")))
-            {
-                sw.Write(script);
-            }
+            File.WriteAllText(Path.Combine(baseDirectory, "build.gradle"), script);
 
             var process = Process.Start(
                 new ProcessStartInfo
@@ -94,17 +90,12 @@ task getDeps(type: Copy) {
                 });
             
             StringBuilder logBuilder = new StringBuilder();
-            process.ErrorDataReceived += (sender, e) =>
-            {
-                logBuilder.AppendLine(e.Data);
-            };
-            process.OutputDataReceived += (sender, e) =>
-            {
-                logBuilder.AppendLine(e.Data);
-            };
+            process.ErrorDataReceived += (sender, e) => logBuilder.AppendLine(e.Data);
+            process.OutputDataReceived += (sender, e) => logBuilder.AppendLine(e.Data);
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             process.WaitForExit();
+
             string log = logBuilder.ToString();
             
             
@@ -119,7 +110,7 @@ task getDeps(type: Copy) {
 
             if (mainFiles.Count < 1)
             {
-                throw new GradleException(log, script);
+                throw new GradleException("No resolved dependencies were found\n" + log, script);
             }
 
             var result = new List<DependencyFile>();
@@ -127,6 +118,7 @@ task getDeps(type: Copy) {
             {
                 result.Add(new DependencyFile(file, false));
             }
+
             foreach (var file in allDependencies)
             {
                 if (!mainFiles.Contains(file))
