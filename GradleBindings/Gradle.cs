@@ -51,7 +51,7 @@ task getDeps(type: Copy) {
         /// <param name="androidSdkHome">Path to Android SDK home, i.e.   C:\Users\Egorbo\AppData\Local\Android\sdk</param>
         /// <param name="customRepositories">By default it searches dependencies to resolve in the jcentral and the local M2 repositores but you can extended it</param>
         /// <param name="detailedLog">if true, --info flag will be used</param>
-        public static IEnumerable<DependencyFile> ExtractDependencies(string dependency, string androidSdkHome, string customRepositories = null, bool detailedLog = false)
+        public static IEnumerable<DependencyFile> ExtractDependencies(string dependency, string androidSdkHome, out string workingDirectory, string customRepositories = null, bool detailedLog = false)
         {
             dependency = dependency.Trim();
 
@@ -60,6 +60,7 @@ task getDeps(type: Copy) {
                 Directory.Delete(baseDirectory, true);
 
             Directory.CreateDirectory(baseDirectory);
+            workingDirectory = baseDirectory;
 
             var resultMainPath = Path.Combine(baseDirectory, "result_all.txt").FixPathForGradle();
             var resultAllPath = Path.Combine(baseDirectory, "result_main.txt").FixPathForGradle();
@@ -121,16 +122,17 @@ task getDeps(type: Copy) {
                 throw new GradleException(log, script);
             }
 
+            var result = new List<DependencyFile>();
             foreach (var file in mainFiles)
             {
-                yield return new DependencyFile(file, false);
+                result.Add(new DependencyFile(file, false));
             }
-
             foreach (var file in allDependencies)
             {
                 if (!mainFiles.Contains(file))
-                    yield return new DependencyFile(file, true);
+                    result.Add(new DependencyFile(file, true));
             }
+            return result;
         }
 
         public static bool HasLocalRepositories(string androidSdkHome, out string repositoriesDir)

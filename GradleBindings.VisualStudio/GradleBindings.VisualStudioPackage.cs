@@ -80,7 +80,7 @@ namespace EgorBo.GradleBindings_VisualStudio
                 errorDialog: new ErrorDialog()).Generate(currentproject.Name);
         }
 
-        public async Task GenerateAsync(string sourceProjectName, string bindingProjectName, IEnumerable<DependencyFile> dependencies)
+        public async Task GenerateAsync(string sourceProjectName, string bindingProjectName, IEnumerable<DependencyFile> dependencies, string bindingInfoFilePath)
         {
             var dependenciesList = dependencies.ToList();
             var envDte = GetService(typeof(DTE)) as DTE2;
@@ -90,7 +90,8 @@ namespace EgorBo.GradleBindings_VisualStudio
             CreateBindingProject(sourceProject, solution, bindingProjectName,
                 dependenciesList.Where(d => d.File.EndsWith("aar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
                 dependenciesList.Where(d => !d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
-                dependenciesList.Where(d => d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File));
+                dependenciesList.Where(d => d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
+                bindingInfoFilePath);
         }
 
         /// <summary>
@@ -101,7 +102,8 @@ namespace EgorBo.GradleBindings_VisualStudio
         private static void CreateBindingProject(VSProject sourceProject, Solution2 solution, string bindingProjectName,
             IEnumerable<string> aarFiles,//multiple aar in a single project doesn't seem like a good idea: https://forums.xamarin.com/discussion/23766/error-no-resource-found-that-matches-the-given-name-when-linking-android-binding-project#latest
             IEnumerable<string> jarFiles,
-            IEnumerable<string> referencedJarFiles)
+            IEnumerable<string> referencedJarFiles,
+            string infoFile)
         {
             var newProject = CreateProjectAndAddReferenceToIt(sourceProject, solution, "BindingsProject.zip", bindingProjectName, "AndroidBindings");
             //BindingsProject.zip stands for   //C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\Extensions\Xamarin\Xamarin\3.11.590.0\T\~PC\PT\Android\BindingsProject.zip\BindingsProject.vstemplate
@@ -133,6 +135,11 @@ namespace EgorBo.GradleBindings_VisualStudio
                     var addedAar = newProject.ProjectItems.AddFromFileCopy(file);
                     addedAar.Properties.Item("ItemType").Value = "ReferenceJar";
                 }
+            }
+
+            if (!string.IsNullOrEmpty(infoFile))
+            {
+                newProject.ProjectItems.AddFromFileCopy(infoFile);
             }
 
             newProject.Save();

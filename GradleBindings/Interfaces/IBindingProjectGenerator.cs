@@ -5,6 +5,6 @@ namespace GradleBindings.Interfaces
 {
     public interface IBindingProjectGenerator
     {
-        Task GenerateAsync(string sourceProjectName, string bindingProjectName, IEnumerable<DependencyFile> dependencies);
+        Task GenerateAsync(string sourceProjectName, string bindingProjectName, IEnumerable<DependencyFile> dependencies, string bindingInfoFilePath);
     }
 }

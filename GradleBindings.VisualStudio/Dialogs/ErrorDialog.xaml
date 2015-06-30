@@ -9,7 +9,7 @@
              Height="545" Width="500">
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
-            <Image Source="/GradleBindings.VisualStudio;component/Resources/sign-error-icon.png" Width="42" />
+            <Image RenderOptions.BitmapScalingMode="HighQuality"  Source="/GradleBindings.VisualStudio;component/Resources/sign-error-icon.png" Width="42" />
             <TextBlock Text="Something went wrong..." VerticalAlignment="Center" Margin="10,0,0,0" FontSize="18"/>
         </StackPanel>
         <TextBox x:Name="LogTextBlock" 
