@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ namespace GradleBindings
 {
     public class GradleBindingsGenerator
     {
-        private readonly IBusyIndicator _busyIndicator;
         private readonly ISettings _settings;
         private readonly IAndroidSdkDialog _androidSdkDialog;
         private readonly IBindingProjectGenerator _bindingProjectGenerator;
@@ -17,7 +17,6 @@ namespace GradleBindings
         private readonly IErrorDialog _errorDialog;
 
         public GradleBindingsGenerator(
-            IBusyIndicator busyIndicator,
             ISettings settings,
             IAndroidSdkDialog androidSdkDialog,
             IBindingProjectGenerator bindingProjectGenerator,
@@ -25,7 +24,6 @@ namespace GradleBindings
             IDependencyOutputSelectorDialog dependencyOutputSelectorDialog, 
             IErrorDialog errorDialog)
         {
-            _busyIndicator = busyIndicator;
             _settings = settings;
             _androidSdkDialog = androidSdkDialog;
             _bindingProjectGenerator = bindingProjectGenerator;
@@ -40,36 +38,52 @@ namespace GradleBindings
             if (string.IsNullOrWhiteSpace(androidSdk))
                 return;
 
-            var dependencyInput = await _dependencyInputDialog.ShowAsync(Gradle.DefaultRepositores);
-            if (dependencyInput == null)
+            Exception exception = null;
+            List<DependencyFile> resultDependencies = null;
+            DependencyInputDialogResult dependencyInputResult = null;
+
+            if (!await _dependencyInputDialog.ShowAsync(Gradle.DefaultRepositores,
+                (dependencyInput) => {
+                    dependencyInputResult = dependencyInput;
+                    return Task.Factory.StartNew(() => {
+                            try
+                            {
+                                resultDependencies = Gradle.ExtractDependencies(dependencyInput.DependencyId, androidSdk, dependencyInput.DependencyRepository).ToList();
+                            }
+                            catch (Exception exc)
+                            {
+                                exception = exc;
+                            }
+                        });
+                }))
+            {
                 return;
+            }
+
+            if (exception != null)
+            {
+                _errorDialog.ShowError(exception.ToString());
+                return;
+            }
 
             try
             {
-                _busyIndicator.IsBusy = true;
-                var resultDependencies = Gradle.ExtractDependencies(dependencyInput.DependencyId, androidSdk, dependencyInput.DependencyRepository).ToList();
-                _busyIndicator.IsBusy = false;
+                //if we have only one binary
                 if (resultDependencies.Count == 1 && !resultDependencies[0].IsTransitive)
                 {
-                    await _bindingProjectGenerator.GenerateAsync(sourceProjectName, dependencyInput.AssemblyName, resultDependencies);
+                    await _bindingProjectGenerator.GenerateAsync(sourceProjectName, dependencyInputResult.AssemblyName, resultDependencies);
                 }
                 else
                 {
                     var filteredDependencies = await _dependencyOutputSelectorDialog.FilterDependenciesAsync(resultDependencies);
-                    if (filteredDependencies != null)
+                    if (filteredDependencies != null && filteredDependencies.Any())
                     {
-                        await _bindingProjectGenerator.GenerateAsync(sourceProjectName, dependencyInput.AssemblyName, filteredDependencies);
+                        await _bindingProjectGenerator.GenerateAsync(sourceProjectName, dependencyInputResult.AssemblyName, filteredDependencies);
                     }
                 }
             }
-            catch (GradleException exc)
-            {
-                _busyIndicator.IsBusy = false;
-                _errorDialog.ShowError(exc.ToString());
-            }
             catch (Exception exc)
             {
-                _busyIndicator.IsBusy = false;
                 _errorDialog.ShowError(exc.ToString());
             }
         }

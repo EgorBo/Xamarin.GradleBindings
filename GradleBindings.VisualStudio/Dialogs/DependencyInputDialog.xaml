@@ -7,6 +7,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" Title="Add new dependency via gradle" 
              Height="240" Width="440">
+    <Grid>
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
         <TextBlock Text="External dependency id:" Margin="0,20,0,0"/>
         <xctk:WatermarkTextBox x:Name="DependencyIdTextBox" TextChanged="DependencyIdTextBox_OnTextChanged" Watermark="com.afollestad:material-dialogs:0.7.6.0" Height="22"/>
@@ -20,4 +21,11 @@
         </Expander>
         <Button x:Name="OkButton" IsEnabled="False" IsDefault="True" Content="Ok" Click="OkButton_OnClick" HorizontalAlignment="Right" Width="90" Margin="0,20,0,0" Height="22"/>
     </StackPanel>
+    <TextBlock Margin="0,10,11,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+        <Hyperlink NavigateUri="https://docs.gradle.org/1.2-rc-1/userguide/artifact_dependencies_tutorial.html" Click="Hyperlink_OnClick">
+            <TextBlock Text="Gradle tutorial"/>
+        </Hyperlink>
+    </TextBlock>
+    <xctk:BusyIndicator x:Name="BusyIndicator" IsBusy="False" BusyContent="This may take a while on the first usage. Please, wait..." />
+    </Grid>
 </platformUi:DialogWindow>

@@ -49,9 +49,7 @@ task getDeps(type: Copy) {
         /// <param name="customRepositories">By default it searches dependencies to resolve in the jcentral and the local M2 repositores but you can extended it</param>
         public static IEnumerable<DependencyFile> ExtractDependencies(string dependency, string androidSdkHome, string customRepositories = null)
         {
-            dependency = dependency.Trim(' ', '\'', '\"');
-            if (dependency.StartsWith("compile ")) //user copy-pasted compile 'dependency-id'
-                dependency = dependency.Remove(0, 8).Trim(' ', '\'', '\\');
+            dependency = dependency.Trim();
 
             string baseDirectory = Path.Combine(Path.GetTempPath(), "Xamarin.GradleBindings", Guid.NewGuid().ToString("N").Substring(0, 6));
             if (Directory.Exists(baseDirectory))

@@ -1,10 +1,11 @@
+using System;
 using System.Threading.Tasks;
 
 namespace GradleBindings.Interfaces
 {
     public interface IDependencyInputDialog
     {
-        Task<DependencyInputDialogResult> ShowAsync(string repositores);
+        Task<bool> ShowAsync(string repositores, Func<DependencyInputDialogResult, Task> taskExecuter);
     }
 
     public class DependencyInputDialogResult

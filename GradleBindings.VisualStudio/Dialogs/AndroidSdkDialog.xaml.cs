@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using GradleBindings.Interfaces;
 
@@ -49,6 +50,11 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             {
                 DialogResult = true;
             }
+        }
+
+        private void PathTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            OkButton.IsEnabled = !string.IsNullOrWhiteSpace(PathTextBox.Text);
         }
     }
 }

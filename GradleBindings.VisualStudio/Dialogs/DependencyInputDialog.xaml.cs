@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using GradleBindings.Interfaces;
 
 namespace EgorBo.GradleBindings_VisualStudio.Dialogs
@@ -12,6 +13,8 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
     /// </summary>
     public partial class DependencyInputDialog : IDependencyInputDialog
     {
+        private Func<DependencyInputDialogResult, Task> _taskExecuter = null;
+
         public DependencyInputDialog()
         {
             InitializeComponent();
@@ -23,21 +26,21 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             InitializeComponent();
         }
 
-        public async Task<DependencyInputDialogResult> ShowAsync(string defualtRepositories)
+        public async Task<bool> ShowAsync(string defualtRepositories, Func<DependencyInputDialogResult, Task> taskExecuter)
         {
+            _taskExecuter = taskExecuter;
             RepositoriesTextBox.Text = defualtRepositories;
-            if (ShowModal() == true)
-            {
-                return new DependencyInputDialogResult(DependencyIdTextBox.Text, ProjectNameTextBox.Text, RepositoriesTextBox.Text);
-            }
-            return null;
+            return ShowModal() == true;
         }
 
-        private void OkButton_OnClick(object sender, RoutedEventArgs e)
+        private async void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(DependencyIdTextBox.Text) &&
                 !string.IsNullOrWhiteSpace(ProjectNameTextBox.Text))
             {
+                BusyIndicator.IsBusy = true;
+                await _taskExecuter(new DependencyInputDialogResult(DependencyIdTextBox.Text, ProjectNameTextBox.Text, RepositoriesTextBox.Text));
+                BusyIndicator.IsBusy = false;
                 DialogResult = true;
             }
         }
@@ -84,6 +87,11 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
         private void UpdateSubmitVisibility()
         {
             OkButton.IsEnabled = !string.IsNullOrWhiteSpace(DependencyIdTextBox.Text) && !string.IsNullOrWhiteSpace(ProjectNameTextBox.Text);
+        }
+
+        private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(((Hyperlink)sender).NavigateUri.ToString());
         }
 
         private void Expander_OnExpanded(object sender, RoutedEventArgs e)

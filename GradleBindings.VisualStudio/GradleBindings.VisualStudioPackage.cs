@@ -21,7 +21,7 @@ namespace EgorBo.GradleBindings_VisualStudio
     [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")] //UICONTEXT_SolutionExists -- force it to autoload
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(GuidList.guidGradleBindings_VisualStudioPkgString)]
-    public sealed class GradleBindings_VisualStudioPackage : Package, IBindingProjectGenerator, IBusyIndicator
+    public sealed class GradleBindings_VisualStudioPackage : Package, IBindingProjectGenerator
     {
         protected override void Initialize()
         {
@@ -73,7 +73,6 @@ namespace EgorBo.GradleBindings_VisualStudio
 
             await new GradleBindingsGenerator(
                 bindingProjectGenerator: this,
-                busyIndicator: this,
                 settings: new SettingsAdapter(),
                 androidSdkDialog: new AndroidSdkDialog(),
                 dependencyInputDialog: new DependencyInputDialog(), 
@@ -165,12 +164,6 @@ namespace EgorBo.GradleBindings_VisualStudio
             }
 
             return newProject;
-        }
-
-        public bool IsBusy
-        {
-            get { return false; }
-            set { /*TODO: */ }
         }
     }
 }
