@@ -49,7 +49,19 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
         {
             //let's try to help user and generate a name for the assembly from Dependency String
             //com.afollestad:material-dialogs:0.7.6.0 --> Binding_MaterialDialogs
-            var text = DependencyIdTextBox.Text;
+            var text = DependencyIdTextBox.Text.Trim(' ', '\t');
+
+            if (text.StartsWith("compile '"))
+            {
+                text = text.Remove(0, "compile '".Length);
+            }
+            text = text.Trim('\'', '\"', ' ');
+            if (text != DependencyIdTextBox.Text)
+            {
+                DependencyIdTextBox.Text = text;
+                return;
+            }
+            
             var parts = text.Split(new[] {":"}, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 3)
             {

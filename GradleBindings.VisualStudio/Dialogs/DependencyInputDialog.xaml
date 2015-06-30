@@ -10,9 +10,9 @@
     <Grid>
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
         <TextBlock Text="External dependency id:" Margin="0,20,0,0"/>
-        <xctk:WatermarkTextBox x:Name="DependencyIdTextBox" TextChanged="DependencyIdTextBox_OnTextChanged" Watermark="com.afollestad:material-dialogs:0.7.6.0" Height="22"/>
+        <xctk:WatermarkTextBox x:Name="DependencyIdTextBox" TextChanged="DependencyIdTextBox_OnTextChanged" Watermark="example: com.afollestad:material-dialogs:0.7.6.0" Height="22"/>
         <TextBlock Text="Binding project name:" Margin="0,6,0,0"/>
-        <xctk:WatermarkTextBox x:Name="ProjectNameTextBox" TextChanged="ProjectNameTextBox_OnTextChanged" Watermark="Binding_MaterialDialogs" Height="22"/>
+            <xctk:WatermarkTextBox x:Name="ProjectNameTextBox" TextChanged="ProjectNameTextBox_OnTextChanged" Watermark="example: Binding_MaterialDialogs" Height="22"/>
         <Expander Header="Add custom repositories" Margin="-2,13,0,0" Expanded="Expander_OnExpanded" Collapsed="Expander_OnCollapsed">
             <StackPanel>
                 <TextBlock Text="Repositories:" Margin="0,6,0,0"/>
