@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using GradleBindings.Extensions;
 
 namespace GradleBindings
@@ -47,7 +48,8 @@ task getDeps(type: Copy) {
         /// <param name="dependency">Dependency id, i.e.  com.afollestad:material-dialogs:0.7.6.0</param>
         /// <param name="androidSdkHome">Path to Android SDK home, i.e.   C:\Users\Egorbo\AppData\Local\Android\sdk</param>
         /// <param name="customRepositories">By default it searches dependencies to resolve in the jcentral and the local M2 repositores but you can extended it</param>
-        public static IEnumerable<DependencyFile> ExtractDependencies(string dependency, string androidSdkHome, string customRepositories = null)
+        /// <param name="detailedLog">if true, --info flag will be used</param>
+        public static IEnumerable<DependencyFile> ExtractDependencies(string dependency, string androidSdkHome, string customRepositories = null, bool detailedLog = false)
         {
             dependency = dependency.Trim();
 
@@ -76,24 +78,33 @@ task getDeps(type: Copy) {
                 sw.Write(script);
             }
 
-            Environment.CurrentDirectory = baseDirectory;
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
+            var process = Process.Start(
+                new ProcessStartInfo
                 {
+                    WorkingDirectory = baseDirectory,
                     FileName = Path.Combine(baseDirectory, "gradlew.bat"),
-                    CreateNoWindow = true,
-                    WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = false,
-                    Arguments = "-info > log.txt"
-                },
+                    CreateNoWindow = true,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    Arguments = detailedLog ? "--info" : ""
+                });
+            
+            StringBuilder logBuilder = new StringBuilder();
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                logBuilder.AppendLine(e.Data);
             };
-
-            process.Start();
+            process.OutputDataReceived += (sender, e) =>
+            {
+                logBuilder.AppendLine(e.Data);
+            };
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
             process.WaitForExit();
-
-            var log = File.ReadAllText(Path.Combine(baseDirectory, "log.txt"));
-
+            string log = logBuilder.ToString();
+            
+            
             if (!File.Exists(resultAllPath) ||
                 !File.Exists(resultMainPath))
             {
