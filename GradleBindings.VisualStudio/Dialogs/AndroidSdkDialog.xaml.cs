@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using GradleBindings;
 using GradleBindings.Interfaces;
 
 namespace EgorBo.GradleBindings_VisualStudio.Dialogs
@@ -26,6 +28,18 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
 
         public async Task<string> AskAsync()
         {
+            //try guess it
+            var userDir = Environment.GetEnvironmentVariable("USERPROFILE");
+            if (!string.IsNullOrEmpty(userDir))
+            {
+                var androidSdkHome = Path.Combine(userDir, @"AppData\Local\Android\sdk");
+                string expectedDir;
+                if (Gradle.HasLocalRepositories(androidSdkHome, out expectedDir))
+                {
+                    PathTextBox.Text = expectedDir;
+                }
+            }
+
             if (ShowModal() == true)
             {
                 return PathTextBox.Text;
@@ -45,16 +59,20 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(PathTextBox.Text)
-                && Directory.Exists(PathTextBox.Text))
+            string expectedDir;
+            if (!Gradle.HasLocalRepositories(PathTextBox.Text, out expectedDir))
             {
-                DialogResult = true;
+                ErrorTextBlock.Text = string.Format("Error: {0} was not found!", expectedDir);
+                ErrorTextBlock.Visibility = Visibility.Visible;
+                return;
             }
+            DialogResult = true;
         }
 
         private void PathTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             OkButton.IsEnabled = !string.IsNullOrWhiteSpace(PathTextBox.Text);
+            ErrorTextBlock.Visibility = Visibility.Hidden;
         }
     }
 }

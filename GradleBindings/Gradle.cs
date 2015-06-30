@@ -11,6 +11,8 @@ namespace GradleBindings
 {
     public class Gradle
     {
+        const string M2RepositoryRelativePath = @"extras\android\m2repository";
+
         public const string DefaultRepositores = 
 @"repositories { 
     maven {
@@ -63,7 +65,7 @@ task getDeps(type: Copy) {
             var resultAllPath = Path.Combine(baseDirectory, "result_main.txt").FixPathForGradle();
 
             var repositories = string.IsNullOrEmpty(customRepositories) ? DefaultRepositores : customRepositories;
-            repositories = repositories.Replace("%M2LOCAL%", Path.Combine(androidSdkHome, @"extras\android\m2repository").FixPathForGradle() + "/");
+            repositories = repositories.Replace("%M2LOCAL%", Path.Combine(androidSdkHome, M2RepositoryRelativePath).FixPathForGradle() + "/");
 
             var script = GradleScriptTemplate
                 .Replace("%CUSTOM_REPOS%", repositories)
@@ -129,6 +131,12 @@ task getDeps(type: Copy) {
                 if (!mainFiles.Contains(file))
                     yield return new DependencyFile(file, true);
             }
+        }
+
+        public static bool HasLocalRepositories(string androidSdkHome, out string repositoriesDir)
+        {
+            repositoriesDir = Path.Combine(androidSdkHome, M2RepositoryRelativePath);
+            return Directory.Exists(repositoriesDir);
         }
 
         private static void CopyEmbeddedGradleFilesTo(string destDir)
