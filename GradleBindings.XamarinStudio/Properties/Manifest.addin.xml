@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ExtensionModel>
-	<Runtime>
-	</Runtime>
+    <Extension path = "/MonoDevelop/Ide/Commands/Edit">
+        <Command id = "GradleBindings.XamarinStudio.DateInserterCommands.InsertDate"
+             _label = "Insert Date"
+             _description = "Insert the current date" 
+             defaultHandler = "GradleBindings.XamarinStudio.InsertDateHandler" />
+    </Extension>
+
+    <Extension path = "/MonoDevelop/Ide/MainMenu/Edit">
+        <CommandItem id="GradleBindings.XamarinStudio.DateInserterCommands.InsertDate" />
+    </Extension>
 </ExtensionModel>

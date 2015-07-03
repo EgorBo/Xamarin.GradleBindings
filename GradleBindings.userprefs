@@ -1,1 +1,16 @@
-﻿<Properties StartupItem="GradleBindings\GradleBindings.csproj" />
+﻿<Properties StartupItem="GradleBindings.XamarinStudio\GradleBindings.XamarinStudio.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="GradleBindings.XamarinStudio\EmptyClass.cs">
+    <Files>
+      <File FileName="GradleBindings.XamarinStudio\Properties\Manifest.addin.xml" Line="14" Column="1" />
+      <File FileName="GradleBindings.XamarinStudio\EmptyClass.cs" Line="10" Column="49" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="C:\Projects\Xamarin.GradleBindings\GradleBindings.XamarinStudio\EmptyClass.cs" line="21" column="1" />
+      <Catchpoint exceptionName="System.Exception" includeSubclasses="True" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
