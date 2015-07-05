@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GradleBindingsGenerator.cs" />
+    <Compile Include="BindingProjectGenerator.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Gradle.cs" />
     <Compile Include="DependencyFile.cs" />

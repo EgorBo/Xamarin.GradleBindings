@@ -66,6 +66,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
                 ErrorTextBlock.Visibility = Visibility.Visible;
                 return;
             }
+            OkButton.IsEnabled = false;
             DialogResult = true;
         }
 

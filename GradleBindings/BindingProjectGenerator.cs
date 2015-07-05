@@ -8,7 +8,7 @@ using GradleBindings.Interfaces;
 
 namespace GradleBindings
 {
-    public class GradleBindingsGenerator
+    public class BindingProjectGenerator
     {
         private readonly ISettings _settings;
         private readonly IAndroidSdkDialog _androidSdkDialog;
@@ -17,7 +17,7 @@ namespace GradleBindings
         private readonly IDependencyOutputSelectorDialog _dependencyOutputSelectorDialog;
         private readonly IErrorDialog _errorDialog;
 
-        public GradleBindingsGenerator(
+        public BindingProjectGenerator(
             ISettings settings,
             IAndroidSdkDialog androidSdkDialog,
             IBindingProjectGenerator bindingProjectGenerator,

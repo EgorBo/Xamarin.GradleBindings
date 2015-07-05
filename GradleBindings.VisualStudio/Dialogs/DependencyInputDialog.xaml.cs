@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using EgorBo.GradleBindings_VisualStudio.Helpers;
 using GradleBindings.Interfaces;
 
 namespace EgorBo.GradleBindings_VisualStudio.Dialogs
@@ -14,10 +16,47 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
     public partial class DependencyInputDialog : IDependencyInputDialog
     {
         private Func<DependencyInputDialogResult, Task> _taskExecuter = null;
+        private readonly string[] _suggestedDependencies = 
+            {
+                "com.afollestad:material-dialogs:0.7.6.0'",
+                "com.afollestad:material-dialogs:+'",
+                "com.pkmmte.view:circularimageview:1.1",
+                "com.pkmmte.view:circularimageview:+",
+                "com.makeramen:roundedimageview:2.1.0",
+                "com.makeramen:roundedimageview:+",
+                "com.facebook.android:facebook-android-sdk:4.1.0",
+                "com.facebook.android:facebook-android-sdk:+",
+                "com.squareup.picasso:picasso:2.5.2",
+                "com.squareup.picasso:picasso:+",
+                "com.github.bumptech.glide:glide:3.6.0",
+                "com.github.bumptech.glide:glide:+",
+                "com.nostra13.universalimageloader:universal-image-loader:1.9.4",
+                "com.nostra13.universalimageloader:universal-image-loader:+",
+                "de.keyboardsurfer.android.widget:crouton:1.8.5",
+                "de.keyboardsurfer.android.widget:crouton:+",
+                "se.emilsjolander:stickylistheaders:+",
+                "com.jpardogo.materialtabstrip:library:1.1.0",
+                "com.jpardogo.materialtabstrip:library:+",
+                "com.github.chrisbanes.photoview:library:1.2.4",
+                "com.github.chrisbanes.photoview:library:+",
+                "com.melnykov:floatingactionbutton:1.3.0",
+                "com.melnykov:floatingactionbutton:+",
+                "com.github.nirhart:parallaxscroll:1.0",
+                "com.github.nirhart:parallaxscroll:+",
+                "com.larswerkman:HoloColorPicker:1.5",
+                "com.larswerkman:HoloColorPicker:+",
+                "net.rdrei.android.dirchooser:library:2.1",
+                "net.rdrei.android.dirchooser:library:+",
+                "com.github.johnkil.android-robototextview:robototextview:2.4.0",
+                "com.github.johnkil.android-robototextview:robototextview:+",
+                "com.sothree.slidinguppanel:library:3.0.0",
+                "com.sothree.slidinguppanel:library:+",
+            };
 
         public DependencyInputDialog()
         {
             InitializeComponent();
+            AutoCompleteBehavior.SetAutoCompleteItemsSource(DependencyIdTextBox, _suggestedDependencies);
         }
 
         public DependencyInputDialog(string helpTopic)
@@ -29,6 +68,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
         public async Task<bool> ShowAsync(string defualtRepositories, Func<DependencyInputDialogResult, Task> taskExecuter)
         {
             _taskExecuter = taskExecuter;
+
             RepositoriesTextBox.Text = defualtRepositories;
             return ShowModal() == true;
         }
@@ -41,6 +81,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
                 BusyIndicator.IsBusy = true;
                 await _taskExecuter(new DependencyInputDialogResult(DependencyIdTextBox.Text, ProjectNameTextBox.Text, RepositoriesTextBox.Text));
                 BusyIndicator.IsBusy = false;
+                OkButton.IsEnabled = false;
                 DialogResult = true;
             }
         }
@@ -103,7 +144,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
 
         private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(((Hyperlink)sender).NavigateUri.ToString());
+            Process.Start(((Hyperlink)sender).NavigateUri.ToString());
         }
 
         private void Expander_OnExpanded(object sender, RoutedEventArgs e)

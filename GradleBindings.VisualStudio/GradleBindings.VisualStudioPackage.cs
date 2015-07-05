@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using EgorBo.GradleBindings_VisualStudio.Dialogs;
+using EgorBo.GradleBindings_VisualStudio.Helpers;
 using EnvDTE;
 using EnvDTE80;
 using GradleBindings;
@@ -71,7 +72,7 @@ namespace EgorBo.GradleBindings_VisualStudio
                 return;
             }
 
-            await new GradleBindingsGenerator(
+            await new BindingProjectGenerator(
                 bindingProjectGenerator: this,
                 settings: new SettingsAdapter(),
                 androidSdkDialog: new AndroidSdkDialog(),
@@ -85,7 +86,8 @@ namespace EgorBo.GradleBindings_VisualStudio
             var dependenciesList = dependencies.ToList();
             var envDte = GetService(typeof(DTE)) as DTE2;
             var solution = envDte.Solution as Solution2;
-            var sourceProject = solution.Projects.OfType<Project>().First(p => p.Name == sourceProjectName).Object as VSProject;
+            var allProjects = solution.GetAllProjects();
+            var sourceProject = allProjects.FirstOrDefault(p => p.Name == sourceProjectName).Object as VSProject;
 
             CreateBindingProject(sourceProject, solution, bindingProjectName,
                 dependenciesList.Where(d => d.File.EndsWith("aar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File),
@@ -153,7 +155,8 @@ namespace EgorBo.GradleBindings_VisualStudio
         private static Project CreateProjectAndAddReferenceToIt(VSProject sourceProject, Solution2 solution, 
             string newProjectTemplate, string newProjectName, string newProjectDirectory)
         {
-            var bindingProjectDir = Path.Combine(Path.GetDirectoryName(solution.FileName), newProjectDirectory ?? "", newProjectName);
+            var bindingProjectDir = Path.Combine(Path.GetDirectoryName(sourceProject != null ? sourceProject.Project.FileName :  solution.FileName), newProjectDirectory ?? "", newProjectName);
+
             if (Directory.Exists(bindingProjectDir))
                 Directory.Delete(bindingProjectDir, true);
 
