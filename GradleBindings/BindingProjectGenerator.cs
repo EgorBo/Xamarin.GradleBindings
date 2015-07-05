@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,20 +43,23 @@ namespace GradleBindings
             List<DependencyFile> resultDependencies = null;
             DependencyInputDialogResult dependencyInputResult = null;
 
-            if (!await _dependencyInputDialog.ShowAsync(Gradle.DefaultRepositores,
-                (dependencyInput) => {
+            var inputSuccess = await _dependencyInputDialog.ShowAsync(repositores: Gradle.DefaultRepositores, taskExecuter: (dependencyInput) => {
                     dependencyInputResult = dependencyInput;
                     return Task.Factory.StartNew(() => {
                             try
                             {
-                                resultDependencies = Gradle.ExtractDependencies(dependencyInput.DependencyId, androidSdk, out workingDirectory, dependencyInput.DependencyRepository).ToList();
+                                resultDependencies = Gradle.ExtractDependencies(dependencyInput.DependencyId, 
+                                    androidSdk, out workingDirectory, dependencyInput.DependencyRepository).ToList();
                             }
                             catch (Exception exc)
                             {
                                 exception = exc;
                             }
                         });
-                }))
+                    });
+
+
+            if (!inputSuccess)
             {
                 return;
             }
@@ -70,9 +72,9 @@ namespace GradleBindings
 
             try
             {
-                string readMeContent = string.Format("Binding for '{0}'\nDependencies:\n\n{1}", 
+                string readMeContent = string.Format("Binding for:\n{0}\n\nDependencies:\n\n{1}", 
                     dependencyInputResult.DependencyId, 
-                    string.Join("\n", resultDependencies.Select(d => string.Format("{0},     Transitive={1},     Path={2}", Path.GetFileName(d.File), d.IsTransitive, d.File))));
+                    string.Join("\n", resultDependencies.Select(d => string.Format("{1}{0},    Path={2}", Path.GetFileName(d.File), d.IsTransitive ? "\t" : "", d.File))));
 
                 var bindingInfoFilePath = Path.Combine(workingDirectory, "GeneratedBindingInfo.txt");
                 File.WriteAllText(bindingInfoFilePath, readMeContent);
@@ -100,7 +102,6 @@ namespace GradleBindings
         private async Task<string> ResolveAndroidSdkPathAsync()
         {
             //TODO: Xamarin VS add-in definitely knows where it is. find!
-
             var androidSdk = Environment.GetEnvironmentVariable("ANDROID_HOME");
             if (string.IsNullOrWhiteSpace(androidSdk))
             {

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace GradleBindings
+﻿namespace GradleBindings
 {
     public class DependencyFile
     {

@@ -53,9 +53,12 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
                 "com.sothree.slidinguppanel:library:+",
             };
 
+        public String[] Deps { get { return _suggestedDependencies; } }
+
         public DependencyInputDialog()
         {
             InitializeComponent();
+            DataContext = this;
             AutoCompleteBehavior.SetAutoCompleteItemsSource(DependencyIdTextBox, _suggestedDependencies);
         }
 
@@ -63,6 +66,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             : base(helpTopic)
         {
             InitializeComponent();
+            DataContext = this;
         }
 
         public async Task<bool> ShowAsync(string defualtRepositories, Func<DependencyInputDialogResult, Task> taskExecuter)

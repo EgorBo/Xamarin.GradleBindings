@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:dialogs="clr-namespace:EgorBo.GradleBindings_VisualStudio.Dialogs"
              mc:Ignorable="d" Title="Add new dependency via gradle" 
-             Height="240" Width="440">
+             Height="240" Width="440"
+             d:DataContext="{d:DesignInstance Type=dialogs:DependencyInputDialog, IsDesignTimeCreatable=True}">
     <Grid>
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
         <TextBlock Text="External dependency id:" Margin="0,20,0,0"/>
@@ -27,5 +29,19 @@
         </Hyperlink>
     </TextBlock>
     <xctk:BusyIndicator x:Name="BusyIndicator" IsBusy="False" BusyContent="This may take a while on the first usage. Please, wait..." />
+        <ListBox Margin="10,68,10,0" ItemsSource="{Binding Deps}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Material Dialogs"/>
+                        <TextBlock Grid.Row="1" Text="com.afollestad:material-dialogs:0.7.6.0"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </platformUi:DialogWindow>
