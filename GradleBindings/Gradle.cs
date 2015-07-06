@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using GradleBindings.Extensions;
 
 namespace GradleBindings
@@ -131,6 +132,15 @@ task getDeps(type: Copy) {
         {
             repositoriesDir = Path.Combine(androidSdkHome, M2RepositoryRelativePath);
             return Directory.Exists(repositoriesDir);
+        }
+
+        /// <summary>
+        /// Only short form is supported
+        /// </summary>
+        public static bool ValidDependencyIdString(string id)
+        {
+            //TODO: improve pattern:
+            return Regex.Match(id, @"^[^:]+:[^:]+:[^:]+$").Success;
         }
 
         /// <summary>

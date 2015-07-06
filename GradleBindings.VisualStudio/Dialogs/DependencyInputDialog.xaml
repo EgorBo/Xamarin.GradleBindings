@@ -30,7 +30,7 @@
     </TextBlock>
         <TextBlock Margin="0,22,11,0" HorizontalAlignment="Right" VerticalAlignment="Top">
         <Hyperlink NavigateUri="https://github.com/wasabeef/awesome-android-ui" Click="Hyperlink_OnClick">
-            <TextBlock Text="List of Android UI/UX Libraries"/>
+            <TextBlock Text="Recommended libraries"/>
         </Hyperlink>
     </TextBlock>
         <xctk:BusyIndicator x:Name="BusyIndicator" IsBusy="False" BusyContent="This may take a while on the first usage. Please, wait..." />

@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using EgorBo.GradleBindings_VisualStudio.Helpers;
 using GradleBindings;
 using GradleBindings.Extensions;
@@ -21,6 +22,11 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
     /// </summary>
     public partial class DependencyInputDialog : IDependencyInputDialog
     {
+        private const string BindingProjectDefaultPrefix = "Binding_"; //TODO: make configurable
+        private static readonly Brush NeutralIdBrush = Brushes.Transparent;
+        private static readonly Brush InvalidIdBrush = new SolidColorBrush(Color.FromArgb(116, 245, 112, 112));
+        private static readonly Brush ValidIdBrush = new SolidColorBrush(Color.FromArgb(245, 178, 242, 184));
+
         private Func<DependencyInputDialogResult, Task> _taskExecuter = null;
         private List<RecommendedDpendencyInfo> _allSuggestions;
 
@@ -60,7 +66,12 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
                 await _taskExecuter(new DependencyInputDialogResult(DependencyIdTextBox.Text, ProjectNameTextBox.Text, RepositoriesTextBox.Text));
                 BusyIndicator.IsBusy = false;
                 OkButton.IsEnabled = false;
-                DialogResult = true;
+
+                try
+                {
+                    DialogResult = true;
+                }
+                catch {} //if closed during the loading..
             }
         }
 
@@ -72,7 +83,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             var readableName = Gradle.GetReadableDependencyName(DependencyIdTextBox.Text);
             if (!string.IsNullOrEmpty(readableName))
             {
-                ProjectNameTextBox.Text = "Binding_" + readableName;
+                ProjectNameTextBox.Text = BindingProjectDefaultPrefix + readableName;
             }
 
             UpdateSubmitVisibility();
@@ -91,7 +102,19 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             {
                 SuggestionsBox.Visibility = Visibility.Collapsed;
             }
+
+            if (!string.IsNullOrEmpty(DependencyIdTextBox.Text))
+            {
+                DependencyIdTextBox.Background = Gradle.ValidDependencyIdString(DependencyIdTextBox.Text)
+                    ? ValidIdBrush
+                    : InvalidIdBrush;
+            }
+            else
+            {
+                DependencyIdTextBox.Background = NeutralIdBrush;
+            }
         }
+
 
         private void ProjectNameTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -108,16 +131,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
         {
             Process.Start(((Hyperlink)sender).NavigateUri.ToString());
         }
-
-        private void Expander_OnExpanded(object sender, RoutedEventArgs e)
-        {
-            this.Height = 410; //Auto doesn't work for DialogWindow
-        }
-
-        private void Expander_OnCollapsed(object sender, RoutedEventArgs e)
-        {
-            this.Height = 240; //Auto doesn't work for DialogWindow
-        }
+        
 
         private void OnSuggestionKeyDown(object sender, KeyEventArgs e)
         {
@@ -195,6 +209,16 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
             SuggestionsBox.Visibility = Visibility.Collapsed;
             DependencyIdTextBox.SelectionStart = item.DependencyId.Length;
             DependencyIdTextBox.Focus();
+        }
+
+        private void Expander_OnExpanded(object sender, RoutedEventArgs e)
+        {
+            this.Height = 410; //Auto doesn't work for DialogWindow
+        }
+
+        private void Expander_OnCollapsed(object sender, RoutedEventArgs e)
+        {
+            this.Height = 240; //Auto doesn't work for DialogWindow
         }
     }
 }

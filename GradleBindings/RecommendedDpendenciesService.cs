@@ -83,6 +83,7 @@ namespace GradleBindings
                     new RecommendedDpendencyInfo("android-process-button", "com.github.dmytrodanylyk.android-process-button:library:1.0.4", "https://github.com/dmytrodanylyk/android-process-button"),
                     new RecommendedDpendencyInfo("android-circlebutton", "com.github.markushi:circlebutton:1.1", "https://github.com/markushi/android-circlebutton"),
                     new RecommendedDpendencyInfo("Moving Button", "com.thefinestartist:movingbutton:1.0.0", "https://github.com/TheFinestArtist/MovingButton"),
+                    //...
                 }.OrderBy(i => i.Name);
         }
     }
