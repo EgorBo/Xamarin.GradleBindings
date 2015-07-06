@@ -7,7 +7,7 @@ How do java developers add dependencies to their projects? Yes that's right, via
 
 ![Alt text](https://habrastorage.org/files/977/26a/f97/97726af97cac492eb591541ab5e2f4b0.gif)
 
-
+## How to use
 **Step 1**: Execute the command over "References" folder
 
 ![Alt text](https://habrastorage.org/files/f19/c62/8e1/f19c628e122349129eaa0436f891b49a.png)
