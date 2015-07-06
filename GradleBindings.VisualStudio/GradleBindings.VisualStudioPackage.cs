@@ -91,8 +91,9 @@ namespace EgorBo.GradleBindings_VisualStudio
 
             CreateBindingProject(sourceProject: sourceProject, solution: solution, bindingProjectName: bindingProjectName, 
                 aarFiles: dependenciesList.Where(d => d.File.EndsWith("aar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File), 
-                jarFiles: dependenciesList.Where(d => /*!d.IsTransitive &&*/ d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File), 
-                referencedJarFiles: null /*MARK ALL TRANSITIVE as InputJar as well     dependenciesList.Where(d => d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File)*/, infoFile: bindingInfoFilePath);
+                jarFiles: dependenciesList.Where(d => !d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File), 
+                referencedJarFiles: dependenciesList.Where(d => d.IsTransitive && d.File.EndsWith("jar", StringComparison.InvariantCultureIgnoreCase)).Select(d => d.File), 
+                infoFile: bindingInfoFilePath);
         }
 
         /// <summary>
