@@ -133,6 +133,71 @@ task getDeps(type: Copy) {
             return Directory.Exists(repositoriesDir);
         }
 
+        /// <summary>
+        /// com.afollestad:material-dialogs:0.7.6.0  -->  MaterialDialogs
+        /// com.github.chrisbanes.photoview:library:+  -->  Photoview
+        /// </summary>
+        public static string GetReadableDependencyName(string dependencyId)
+        {
+            if (string.IsNullOrWhiteSpace(dependencyId))
+                return string.Empty;
+
+            try
+            {
+                dependencyId = dependencyId.Trim(' ', '\'', '\"');
+                var parts = dependencyId.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 3)
+                {
+                    var rsb = new StringBuilder();
+                    var name = parts[1];
+                    if ("library".Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        //meaningless name, let's use the last part of "group" instead:
+                        name = parts[0];
+                        if (!string.IsNullOrEmpty(name))
+                        {
+                            var indexOfDot = name.LastIndexOf(".");
+                            if (indexOfDot > 0 && indexOfDot < name.Length - 1)
+                            {
+                                name = name.Remove(0, indexOfDot);
+                            }
+                        }
+                    }
+
+                    bool previousWasnotLetter = true;
+                    for (int i = 0; i < name.Length; i++)
+                    {
+                        if (char.IsLetter(name[i]))
+                        {
+                            rsb.Append(previousWasnotLetter ? char.ToUpper(name[i]) : name[i]);
+                            previousWasnotLetter = false;
+                            continue;
+                        }
+                        if (char.IsDigit(name[i]) && i > 0)
+                        {
+                            rsb.Append(name[i]);
+                        }
+                        previousWasnotLetter = true;
+                    }
+
+                    if (rsb.Length > 1)
+                    {
+                        var result = rsb.ToString().Trim(' ', '.', ':', '-');
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            return result[0].ToString().ToUpper() + result.Remove(0, 1);
+                        }
+                        return result;
+                    }
+                }
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         private static void CopyEmbeddedGradleFilesTo(string destDir)
         {
             var executingAssembly = Assembly.GetExecutingAssembly();

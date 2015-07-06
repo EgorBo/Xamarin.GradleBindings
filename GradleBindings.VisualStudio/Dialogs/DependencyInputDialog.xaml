@@ -7,12 +7,12 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:dialogs="clr-namespace:EgorBo.GradleBindings_VisualStudio.Dialogs"
              mc:Ignorable="d" Title="Add new dependency via gradle" 
-             Height="240" Width="440"
+             Height="240" Width="440" PreviewKeyDown="DependencyInputDialog_OnPreviewKeyDown"
              d:DataContext="{d:DesignInstance Type=dialogs:DependencyInputDialog, IsDesignTimeCreatable=True}">
     <Grid>
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
         <TextBlock Text="External dependency id:" Margin="0,20,0,0"/>
-        <xctk:WatermarkTextBox x:Name="DependencyIdTextBox" TextChanged="DependencyIdTextBox_OnTextChanged" Watermark="example: com.afollestad:material-dialogs:0.7.6.0" Height="22"/>
+        <xctk:WatermarkTextBox x:Name="DependencyIdTextBox" PreviewKeyDown="OnDependencyTextKeyDown" TextChanged="DependencyIdTextBox_OnTextChanged" Watermark="example: com.afollestad:material-dialogs:0.7.6.0" Height="22"/>
         <TextBlock Text="Binding project name:" Margin="0,6,0,0"/>
             <xctk:WatermarkTextBox x:Name="ProjectNameTextBox" TextChanged="ProjectNameTextBox_OnTextChanged" Watermark="example: Binding_MaterialDialogs" Height="22"/>
         <Expander Header="Add custom repositories" Margin="-2,13,0,0" Expanded="Expander_OnExpanded" Collapsed="Expander_OnCollapsed">
@@ -21,24 +21,39 @@
                 <TextBox x:Name="RepositoriesTextBox" Height="150" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" TextWrapping="Wrap"/>
             </StackPanel>
         </Expander>
-        <Button x:Name="OkButton" IsEnabled="False" IsDefault="True" Content="Ok" Click="OkButton_OnClick" HorizontalAlignment="Right" Width="90" Margin="0,20,0,0" Height="22"/>
+        <Button x:Name="OkButton" IsEnabled="False" IsDefault="False" Content="Ok" Click="OkButton_OnClick" HorizontalAlignment="Right" Width="90" Margin="0,20,0,0" Height="22"/>
     </StackPanel>
-    <TextBlock Margin="0,10,11,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+    <TextBlock Margin="0,5,11,0" HorizontalAlignment="Right" VerticalAlignment="Top">
         <Hyperlink NavigateUri="https://docs.gradle.org/1.2-rc-1/userguide/artifact_dependencies_tutorial.html" Click="Hyperlink_OnClick">
             <TextBlock Text="Gradle tutorial"/>
         </Hyperlink>
     </TextBlock>
-    <xctk:BusyIndicator x:Name="BusyIndicator" IsBusy="False" BusyContent="This may take a while on the first usage. Please, wait..." />
-        <ListBox Margin="10,68,10,0" ItemsSource="{Binding Deps}">
+        <TextBlock Margin="0,22,11,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+        <Hyperlink NavigateUri="https://github.com/wasabeef/awesome-android-ui" Click="Hyperlink_OnClick">
+            <TextBlock Text="List of Android UI/UX Libraries"/>
+        </Hyperlink>
+    </TextBlock>
+        <xctk:BusyIndicator x:Name="BusyIndicator" IsBusy="False" BusyContent="This may take a while on the first usage. Please, wait..." />
+        <ListBox x:Name="SuggestionsBox" Margin="10,68,10,0" Visibility="Collapsed" 
+                 ScrollViewer.CanContentScroll="False"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 PreviewKeyDown="OnSuggestionKeyDown" 
+                 PreviewMouseDown="SuggestionsBox_OnPreviewMouseDown">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition/>
+                            <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Material Dialogs"/>
-                        <TextBlock Grid.Row="1" Text="com.afollestad:material-dialogs:0.7.6.0"/>
+                        <TextBlock Grid.Row="0" Text="{Binding Name}" FontWeight="Bold"/>
+                        <TextBlock Grid.Row="1" Text="{Binding DependencyId}"/>
+                        <TextBlock Grid.Row="2" Margin="0,-1,0,4">
+                            <Hyperlink NavigateUri="{Binding Url}">
+                                <TextBlock Name="Url" Text="{Binding Url}" />
+                            </Hyperlink>
+                        </TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
