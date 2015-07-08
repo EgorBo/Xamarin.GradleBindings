@@ -118,7 +118,6 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
 
         private void ProjectNameTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            SuggestionsBox.Visibility = Visibility.Visible;
             UpdateSubmitVisibility();
         }
 
