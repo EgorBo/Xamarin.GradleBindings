@@ -19,7 +19,7 @@ namespace GradleBindings
                     new RecommendedDpendencyInfo("RoundedImageView", "com.makeramen:roundedimageview:2.1.0", "https://github.com/vinc3m1/RoundedImageView"),
                     new RecommendedDpendencyInfo("Facebook SDK", "com.facebook.android:facebook-android-sdk:4.1.0", "https://github.com/facebook/facebook-android-sdk"),
                     new RecommendedDpendencyInfo("Picasso", "com.squareup.picasso:picasso:2.5.2", "https://github.com/square/picasso"),
-                    new RecommendedDpendencyInfo("Glide", "com.github.bumptech.glide:glide", "https://github.com/bumptech/glide"),
+                    new RecommendedDpendencyInfo("Glide", "com.github.bumptech.glide:glide:+", "https://github.com/bumptech/glide"),
                     new RecommendedDpendencyInfo("Universal Image Loader UID", "com.nostra13.universalimageloader:universal-image-loader:1.9.4", "https://github.com/nostra13/Android-Universal-Image-Loader"),
                     new RecommendedDpendencyInfo("Crouton", "de.keyboardsurfer.android.widget:crouton:1.8.5", "https://github.com/keyboardsurfer/Crouton"),
                     new RecommendedDpendencyInfo("StickyListHeaders", "se.emilsjolander:stickylistheaders:+", "https://github.com/emilsjolander/StickyListHeaders"),
