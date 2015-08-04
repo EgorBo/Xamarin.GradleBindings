@@ -12,7 +12,13 @@
         <Tags>xamarin, gradle, maven, jcenter</Tags>
     </Metadata>
     <Installation InstalledByMsi="false">
-        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0]" />
+        <InstallationTarget Version="[12.0,15.0)" Id="Microsoft.VisualStudio.IntegratedShell" />
+	    <InstallationTarget Version="[12.0,15.0)" Id="Microsoft.VisualStudio.Community" />
+        <InstallationTarget Version="[11.0,15.0)" Id="Microsoft.VisualStudio.Pro" />
+        <InstallationTarget Version="[11.0,15.0)" Id="Microsoft.VisualStudio.Enterprise" />
+        <InstallationTarget Version="[11.0,15.0)" Id="Microsoft.VisualStudio.Premium" />
+        <InstallationTarget Version="[11.0,15.0)" Id="Microsoft.VisualStudio.Ultimate" />
+        <InstallationTarget Version="[12.0,15.0)" Id="Microsoft.VisualStudio.VSLS" />
     </Installation>
     <Dependencies>
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
