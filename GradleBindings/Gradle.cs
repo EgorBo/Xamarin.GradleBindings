@@ -106,8 +106,8 @@ task getDeps(type: Copy) {
                 throw new GradleException(log, script);
             }
 
-            var allDependencies = File.ReadAllLines(resultAllPath).Where(f => !String.IsNullOrWhiteSpace(f)).ToList(); //dependencies of the dependency
-            var mainFiles = File.ReadAllLines(resultMainPath).Where(f => !String.IsNullOrWhiteSpace(f)).ToList();
+            var allDependencies = File.ReadAllLines(resultAllPath, Encoding.Default).Where(f => !String.IsNullOrWhiteSpace(f)).ToList(); //dependencies of the dependency
+            var mainFiles = File.ReadAllLines(resultMainPath, Encoding.Default).Where(f => !String.IsNullOrWhiteSpace(f)).ToList();
 
             if (mainFiles.Count < 1)
             {
