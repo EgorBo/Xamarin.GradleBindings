@@ -15,7 +15,7 @@ namespace GradleBindings.Console
 
         private static async void MainAsync()
         {
-            var androidSdk = Environment.GetEnvironmentVariable("ANDROID_HOME") ?? Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), @"AppData\Local\Android\sdk");
+            var androidSdk = AndroidSdkLocator.Locate();
 
             string repositoriesDir;
             if (!Gradle.HasLocalRepositories(androidSdk, out repositoriesDir))

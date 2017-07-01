@@ -8,7 +8,8 @@ namespace GradleBindings
     {
         public async Task<IEnumerable<RecommendedDpendencyInfo>> GetAsync()
         {
-            //TODO: create a web service
+            //TODO: update the list or create a web service
+            return new RecommendedDpendencyInfo[0];
 
             return new[]
                 {

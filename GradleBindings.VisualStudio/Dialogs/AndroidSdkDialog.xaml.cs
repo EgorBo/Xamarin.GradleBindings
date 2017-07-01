@@ -29,16 +29,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
         public async Task<string> AskAsync()
         {
             //try guess it
-            var userDir = Environment.GetEnvironmentVariable("USERPROFILE");
-            if (!string.IsNullOrEmpty(userDir))
-            {
-                var androidSdkHome = Path.Combine(userDir, @"AppData\Local\Android\sdk");
-                string expectedDir;
-                if (Gradle.HasLocalRepositories(androidSdkHome, out expectedDir))
-                {
-                    PathTextBox.Text = expectedDir;
-                }
-            }
+            PathTextBox.Text = AndroidSdkLocator.Locate();
 
             if (ShowModal() == true)
             {

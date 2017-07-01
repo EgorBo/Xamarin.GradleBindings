@@ -23,7 +23,7 @@
         </Expander>
         <Button x:Name="OkButton" IsEnabled="False" IsDefault="False" Content="Ok" Click="OkButton_OnClick" HorizontalAlignment="Right" Width="90" Margin="0,20,0,0" Height="22"/>
     </StackPanel>
-        <TextBlock Margin="0,5,11,0" HorizontalAlignment="Right" VerticalAlignment="Top" Opacity="0.7">
+        <TextBlock Margin="0,5,11,0" HorizontalAlignment="Right" VerticalAlignment="Top" Opacity="0.7" Visibility="Hidden">
         <Hyperlink NavigateUri="https://docs.gradle.org/1.2-rc-1/userguide/artifact_dependencies_tutorial.html" Click="Hyperlink_OnClick">
             <TextBlock Text="Gradle tutorial"/>
         </Hyperlink>
