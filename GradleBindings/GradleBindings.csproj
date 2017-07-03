@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AndroidSdkLocator.cs" />
+    <Compile Include="SystemPaths.cs" />
     <Compile Include="BindingProjectGenerator.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

@@ -29,7 +29,7 @@ namespace EgorBo.GradleBindings_VisualStudio.Dialogs
         public async Task<string> AskAsync()
         {
             //try guess it
-            PathTextBox.Text = AndroidSdkLocator.Locate();
+            PathTextBox.Text = SystemPaths.GetAndroidSdkPath();
 
             if (ShowModal() == true)
             {

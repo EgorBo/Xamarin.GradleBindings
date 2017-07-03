@@ -14,12 +14,12 @@ namespace GradleBindings
     {
         const string M2RepositoryRelativePath = @"extras\android\m2repository";
 
-        public const string DefaultRepositores = 
+        public const string DefaultRepositores =
 @"repositories { 
-    maven {
-        url ""%M2LOCAL%"" //will be replaced by add-in
-    }
+    maven { url ""%M2LOCAL%"" } // will be replaced by the add-in
     jcenter()
+    maven { url ""https://jitpack.io"" }
+    // add custom repositores here
  }"; 
 
         private const string GradleScriptTemplate =
@@ -77,6 +77,9 @@ task getDeps(type: Copy) {
 
             CopyEmbeddedGradleFilesTo(baseDirectory);
             File.WriteAllText(Path.Combine(baseDirectory, "build.gradle"), script);
+
+            //if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("JAVA_HOME")))
+            //    Environment.SetEnvironmentVariable("JAVA_HOME", SystemPaths.GetJavaHome());
 
             var process = Process.Start(
                 new ProcessStartInfo
@@ -193,11 +196,12 @@ task getDeps(type: Copy) {
                     if (rsb.Length > 1)
                     {
                         var result = rsb.ToString().Trim(' ', '.', ':', '-');
-                        if (!string.IsNullOrEmpty(result))
-                        {
-                            return result[0].ToString().ToUpper() + result.Remove(0, 1);
-                        }
-                        return result;
+                        // some widely used words to capitalize (e.g.: arclayout -> ArcLayout):
+                        string[] words = { "view", "dialog", "layout", "button", "effect", "activity", "header", "panel", "design" };
+                        foreach (var word in words)
+                            result = result.Replace(word, word.Capitalize());
+
+                        return result.Capitalize();
                     }
                 }
                 return string.Empty;
