@@ -1,4 +1,4 @@
-Xamarin.GradleBindings
+Xamarin.GradleBindings - Adding Java libs to Xamarin.Android is as simple as "Adding Reference" in VS.
 =========
 
 Link to extensions gallery: https://visualstudiogallery.msdn.microsoft.com/3a3257c7-473a-4790-9610-9a561eed0b8c
