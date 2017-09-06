@@ -13,6 +13,8 @@ using GradleBindings.Interfaces;
 using Microsoft.VisualStudio.Shell;
 using VSLangProj;
 using Task = System.Threading.Tasks.Task;
+using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace EgorBo.GradleBindings_VisualStudio
 {
@@ -33,7 +35,12 @@ namespace EgorBo.GradleBindings_VisualStudio
                 CommandID generateBindingCmdId = new CommandID(GuidList.guidGradleBindings_VisualStudioCmdSet, (int)PkgCmdIDList.cmdidGenerateBinding);
                 OleMenuCommand menuItem = new OleMenuCommand(GenerateBindingMenuClickedCallback, generateBindingCmdId);
                 menuItem.BeforeQueryStatus += GenerateBindingsMenu_OnBeforeQueryStatus;
-                mcs.AddCommand( menuItem );
+                mcs.AddCommand(menuItem);
+
+                CommandID generateBindingFromFileCmdId = new CommandID(GuidList.guidGradleBindings_VisualStudioCmdSet, (int)PkgCmdIDList.cmdidGenerateBindingFromFile);
+                OleMenuCommand generateBindingFromFileMenuItem = new OleMenuCommand(GenerateBindingFromFileMenuClickedCallback, generateBindingFromFileCmdId);
+                generateBindingFromFileMenuItem.BeforeQueryStatus += GenerateBindingsMenu_OnBeforeQueryStatus;
+                mcs.AddCommand(generateBindingFromFileMenuItem);
             }
         }
 
@@ -58,19 +65,48 @@ namespace EgorBo.GradleBindings_VisualStudio
             menu.Visible = enable;
         }
 
-        private async void GenerateBindingMenuClickedCallback(object sender, EventArgs e)
+        private async void GenerateBindingFromFileMenuClickedCallback(object sender, EventArgs e)
+        {
+            var currentproject = GetCurrentProject();
+            if (currentproject == null)
+                return;
+
+            var fileDlg = new OpenFileDialog();
+            fileDlg.CheckFileExists = true;
+            fileDlg.Filter = "*.jar|*.aar";
+            fileDlg.Multiselect = true;
+            var result = fileDlg.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                var files = fileDlg.FileNames;
+                if (files == null || files.Length == 0)
+                    return;
+
+                var bindingProjectName = Path.GetFileNameWithoutExtension(files[0]);
+                bindingProjectName = new Regex("[^a-zA-Z0-9 -]").Replace(bindingProjectName, "");
+                if (bindingProjectName.Length < 2)
+                    bindingProjectName = "MyBindings";
+                bindingProjectName = char.ToUpper(bindingProjectName[0]) + bindingProjectName.Substring(1);
+
+                await GenerateAsync(currentproject.Name, "Binding_" + bindingProjectName, files.Select(f => new DependencyFile(f, false)), null);
+            }
+        }
+
+        private Project GetCurrentProject()
         {
             var envDte = GetService(typeof(DTE)) as DTE2;
             Array projects = envDte.ActiveSolutionProjects as Array;
-            Project currentproject;
+            Project currentproject = null;
             if (projects.Length > 0)
-            {
                 currentproject = projects.GetValue(0) as Project;
-            }
-            else
-            {
+            return currentproject;
+        }
+
+        private async void GenerateBindingMenuClickedCallback(object sender, EventArgs e)
+        {
+            var currentproject = GetCurrentProject();
+            if (currentproject == null)
                 return;
-            }
 
             await new BindingProjectGenerator(
                 bindingProjectGenerator: this,

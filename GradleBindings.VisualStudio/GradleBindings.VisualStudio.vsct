@@ -67,11 +67,19 @@
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
-          <ButtonText>Add dependency via gradle (Generates Android Binding project)</ButtonText>
+          <ButtonText>Generate Xamarin.Android Bindings via gradle</ButtonText>
         </Strings>
       </Button>
 
-
+      <Button guid="guidGradleBindings_VisualStudioCmdSet" id="cmdidGenerateBindingFromFile" priority="0x0101" type="Button">
+        <Parent guid="guidGradleBindings_VisualStudioCmdSet" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="bmpPic1" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Generate Xamarin.Android Bindings from file (*.aar/*.jar)</ButtonText>
+        </Strings>
+      </Button>
 
     </Buttons>
    
@@ -101,6 +109,7 @@
 
       <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="cmdidGenerateBinding" value="0x0100" />
+      <IDSymbol name="cmdidGenerateBindingFromFile" value="0x0101" />
     </GuidSymbol>
     
     
